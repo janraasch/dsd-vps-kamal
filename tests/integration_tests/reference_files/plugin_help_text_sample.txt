@@ -1,0 +1,6 @@
+Options for dsd-flyio:
+  Full documentation: https://django-simple-deploy.readthedocs.io/en/latest/
+  quick_starts/quick_start_flyio/#customizing-the-deployment
+
+  --vm-size VM_SIZE     Name for a preset vm-size configuration on Fly.io, ie
+                        `shared-cpu-2x`.
