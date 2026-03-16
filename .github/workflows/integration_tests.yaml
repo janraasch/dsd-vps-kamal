@@ -1,0 +1,60 @@
+name: integration_tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    name: Run integration tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout dsd-vps-kamal
+        uses: actions/checkout@v6
+        with:
+          path: dsd-vps-kamal
+      - name: Checkout django-simple-deploy
+        uses: actions/checkout@v6
+        with:
+          repository: django-simple-deploy/django-simple-deploy
+          path: django-simple-deploy
+      - name: Install just
+        uses: extractions/setup-just@v3
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.14"
+      - name: Configure Git
+        run: |
+          git config --global user.email "ci_tester@example.com"
+          git config --global user.name "Ci Tester"
+          git config --global init.defaultBranch main
+
+      # --- macOS and Linux ---
+
+      - name: Set up environment (macOS/Linux)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+        run: cd dsd-vps-kamal && just ci-setup
+      - name: Run integration tests (macOS/Linux)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+        run: cd dsd-vps-kamal && just test-integration
+
+      # --- Windows ---
+
+      - name: Set up environment (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd django-simple-deploy
+          uv venv --allow-existing
+          uv pip install -e ".[dev]"
+          uv pip install -e "../dsd-vps-kamal[dev]"
+      - name: Run integration tests (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd django-simple-deploy
+          uv run pytest -x

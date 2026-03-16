@@ -1,0 +1,131 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsd-vps-kamal"
+version = "0.1.0"
+description = "A Django Simple Deploy plugin for deploying Django projects to any VPS provider using Kamal."
+readme = "README.md"
+
+authors = [
+    {name = "Jan Raasch", email = "jan@janraasch.com" },
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+keywords = ["django", "deployment", "vps", "kamal"]
+
+requires-python = ">=3.9"
+
+dependencies = [
+    "django>=4.2",
+    "pluggy>=1.5.0",
+    "toml>=0.10.2",
+    "requests>=2.32.2",
+    "django-simple-deploy>=0.9.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+    "build>=1.2.1",
+    "pytest>=8.3.0",
+    "pytest-mock>=3.15.0",
+    "twine>=5.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8.0",
+    "build>=1.2.1",
+    "pytest>=8.3.0",
+    "pytest-mock>=3.15.0",
+    "twine>=5.1.1",
+]
+
+# [project.urls]
+# "Documentation" = "<documentation URL>"
+# "GitHub" = "<GH repo URL>"
+# "Changelog" = "<changelog URL"
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit_tests"]
+addopts = "--verbose"
+
+[tool.setuptools]
+packages = [
+    "dsd_vps_kamal",
+    "dsd_vps_kamal.templates",
+]
+include-package-data = true
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".github",
+    ".hg",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "migrations",
+    "node_modules",
+    "static",
+    # Jinja templates that aren't valid Python
+    "dsd_vps_kamal/templates/settings.py",
+    "tests/integration_tests/reference_files/settings.py",
+    "tests/integration_tests/reference_files/settings_sqlite.py",
+]
+# Same as Black.
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "I"]
+# Pytest fixture imports from core's conftest trigger F811 on test function params.
+# TODO: Consider using @pytest.mark.usefixtures instead of explicit imports to avoid F811.
+#   Currently not possible because fixtures live in core's conftest (django-simple-deploy)
+#   and pytest_plugins can't be used in non-top-level conftest files.
+#   See: https://docs.pytest.org/en/stable/how-to/fixtures.html#use-fixtures-in-classes-and-modules-with-usefixtures
+per-file-ignores = { "tests/**/test_*.py" = ["F811"] }
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+unfixable = []

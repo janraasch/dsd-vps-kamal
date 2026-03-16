@@ -1,0 +1,64 @@
+# Name of your application. Used to uniquely configure containers.
+service: {{ app_name }}
+
+# Name of the container image.
+image: {{ app_name }}
+
+# Deploy to these servers.
+servers:
+  web:
+    - {{ ip_address }}
+
+{% if use_sqlite %}
+# Persistent SQLite database (named volume on the host).
+volumes:
+  - db_data:/app/db
+
+{% endif %}
+# Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
+# Remove this section when using multiple web servers and ensure you terminate SSL at your load balancer.
+#
+# Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
+proxy:
+{% if host %}  host: {{ host }}
+  ssl: true
+{% endif %}  app_port: 8000
+  healthcheck:
+    path: /kamal/up/
+    interval: 2
+    timeout: 2
+
+# Use local Docker registry.
+registry:
+  server: localhost:5555
+
+# Configure builder setup.
+builder:
+  arch: amd64
+
+# Inject ENV variables into containers (secrets come from .kamal/secrets).
+env:
+  clear:
+    ON_VPS: TRUE
+    DEBUG: "FALSE"
+  secret:
+    - SECRET_KEY
+{% if not use_sqlite %}    - DATABASE_URL
+    - POSTGRES_PASSWORD
+{% endif %}
+{% if not use_sqlite %}
+# Use accessory services (secrets come from .kamal/secrets).
+accessories:
+  postgres:
+    image: postgres:18
+    host: {{ ip_address }}
+    port: "127.0.0.1:5432:5432"
+    directories:
+      - data:/var/lib/postgresql
+    env:
+      clear:
+        POSTGRES_USER: {{ app_name }}
+        POSTGRES_DB: {{ app_name }}
+      secret:
+        - POSTGRES_PASSWORD
+{% endif %}
