@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "dsd-vps-kamal"
 version = "0.1.0"
-description = "A plugin for django-simple-deploy, supporting deployments to VPS Kamal."
+description = "A Django Simple Deploy plugin for deploying Django projects to any VPS provider using Kamal."
 readme = "README.md"
 
 authors = [
-    {name = "Eric Matthes", email = "ehmatthes@gmail.com" },
+    {name = "Jan Raasch", email = "jan@janraasch.com" },
 ]
 
 classifiers = [
