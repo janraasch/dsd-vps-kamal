@@ -8,7 +8,7 @@ import django_simple_deploy
 
 from dsd_vps_kamal.platform_deployer import PlatformDeployer
 from .plugin_config import plugin_config
-from .cli import PluginCLI, validate_cli
+from .cli import validate_cli  # , PluginCLI
 
 
 @django_simple_deploy.hookimpl
@@ -18,9 +18,9 @@ def dsd_get_plugin_config():
 
 
 @django_simple_deploy.hookimpl
-def dsd_get_plugin_cli(parser):
+def dsd_get_plugin_cli(_parser):
     """Get plugin's CLI extension."""
-    plugin_cli = PluginCLI(parser)
+    # plugin_cli = PluginCLI(parser)
 
 
 @django_simple_deploy.hookimpl

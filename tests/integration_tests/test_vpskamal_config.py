@@ -1,19 +1,19 @@
 """Integration tests for django-simple-deploy, targeting VPS Kamal."""
 
-import sys
+# import sys
 from pathlib import Path
-import subprocess
+# import subprocess
 
-import pytest
+# import pytest
 
 from tests.integration_tests.utils import it_helper_functions as hf
-from tests.integration_tests.conftest import (
-    tmp_project,
-    run_dsd,
-    reset_test_project,
-    pkg_manager,
-    dsd_version,
-)
+# from tests.integration_tests.conftest import (
+#     tmp_project,
+#     run_dsd,
+#     reset_test_project,
+#     pkg_manager,
+#     dsd_version,
+# )
 
 
 # --- Fixtures ---
@@ -118,7 +118,7 @@ def test_log_dir(tmp_project):
 
     # There should be exactly two log files.
     log_files = sorted(log_path.glob("*"))
-    log_filenames = [lf.name for lf in log_files]
+    # log_filenames = [lf.name for lf in log_files]
     # Check for exactly the log files we expect to find.
     # DEV: Currently just testing that a log file exists. Add a regex text for a file
     # like "simple_deploy_2022-07-09174245.log".

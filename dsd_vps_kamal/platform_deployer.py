@@ -43,19 +43,21 @@ Add a set of requirements:
         plugin_utils.add_packages(requirements)
 """
 
-import sys, os, re, json
+# import sys, os, re, json
 from pathlib import Path
 
-from django.utils.safestring import mark_safe
+# from django.utils.safestring import mark_safe
 
-import requests
+# import requests
 
 from . import deploy_messages as platform_msgs
-from .plugin_config import plugin_config
+# from .plugin_config import plugin_config
 
 from django_simple_deploy.management.commands.utils import plugin_utils
 from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
-from django_simple_deploy.management.commands.utils.command_errors import DSDCommandError
+# from django_simple_deploy.management.commands.utils.command_errors import (
+#     DSDCommandError,
+# )
 
 
 class PlatformDeployer:

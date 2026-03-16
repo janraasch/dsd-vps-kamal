@@ -1,25 +1,25 @@
 """Extends the core django-simple-deploy CLI."""
 
-import json
-import shlex
-import subprocess
+# import json
+# import shlex
+# import subprocess
 
-from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
-from django_simple_deploy.management.commands.utils.command_errors import (
-    DSDCommandError,
-)
+# from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
+# from django_simple_deploy.management.commands.utils.command_errors import (
+#     DSDCommandError,
+# )
 
-from .plugin_config import plugin_config
+# from .plugin_config import plugin_config
 
 
 class PluginCLI:
     def __init__(self, parser):
         """Add plugin-specific args."""
-        group_desc = "Plugin-specific CLI args for dsd-vps-kamal"
-        plugin_group = parser.add_argument_group(
-            title="Options for dsd-vps-kamal",
-            description=group_desc,
-        )
+        # group_desc = "Plugin-specific CLI args for dsd-vps-kamal"
+        # plugin_group = parser.add_argument_group(
+        #     title="Options for dsd-vps-kamal",
+        #     description=group_desc,
+        # )
 
         # plugin_group.add_argument(
         #     "--vm-size",

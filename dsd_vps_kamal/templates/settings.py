@@ -1,3 +1,3 @@
-{{current_settings}}
+# {{current_settings}}
 
 # VPS Kamal settings.

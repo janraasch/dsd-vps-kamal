@@ -4,7 +4,7 @@
 
 from textwrap import dedent
 
-from django.conf import settings
+# from django.conf import settings
 
 
 confirm_automate_all = """
