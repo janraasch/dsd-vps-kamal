@@ -38,6 +38,7 @@ You can log in from  the command line:
 # These need to be generated in functions, to display information that's determined as
 # the script runs.
 
+
 def success_msg(log_output=""):
     """Success message, for configuration-only run.
 
@@ -46,7 +47,7 @@ def success_msg(log_output=""):
     """
 
     msg = dedent(
-        f"""
+        """
         --- Your project is now configured for deployment on VPS Kamal ---
 
         To deploy your project, you will need to:
@@ -67,7 +68,7 @@ def success_msg(log_output=""):
 
     if log_output:
         msg += dedent(
-            f"""
+            """
         - You can find a full record of this configuration in the dsd_logs directory.
         """
         )

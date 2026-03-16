@@ -1,4 +1,4 @@
-import re, time
+import time
 
 import pytest
 
@@ -46,10 +46,10 @@ def test_deployment(tmp_project, cli_options, request):
     if cli_options.pkg_manager == "pipenv":
         it_utils.make_sp_call(f"{python_cmd} -m pipenv lock")
 
-    # Note: This is an example of how you can stash information about the deployment, 
+    # Note: This is an example of how you can stash information about the deployment,
     #   which can be used in the teardown phase. You do need to set project_url,
     #   in order to run functionality tests against the deployed project.
-    # 
+    #
     # Get the deployed project's URL, and ID so we can destroy it later.
     #   This also commits configuration changes and pushes the project
     #   when testing the configuration-only workflow.
@@ -60,7 +60,7 @@ def test_deployment(tmp_project, cli_options, request):
     # else:
     #     it_utils.commit_configuration_changes()
     #     project_url = platform_utils.deploy_project(app_name)
-    
+
     # Note: ***** Remove this line, or your test will always report as passed! *****
     remote_functionality_passed = True
 
@@ -68,9 +68,9 @@ def test_deployment(tmp_project, cli_options, request):
     print("\nPausing 10s to let deployment finish...")
     time.sleep(10)
 
-    # Note: Uncomment this section once your deployment is successful, and 
+    # Note: Uncomment this section once your deployment is successful, and
     #   project_url is set in the above section.
-    # 
+    #
     # Test functionality of both deployed app, and local project.
     #   We want to make sure the deployment works, but also make sure we haven't
     #   affected functionality of the local project using the development server.

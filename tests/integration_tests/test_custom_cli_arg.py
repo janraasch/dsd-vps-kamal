@@ -1,5 +1,4 @@
-"""Test a custom plugin-specific CLI arg.
-"""
+"""Test a custom plugin-specific CLI arg."""
 
 import pytest
 

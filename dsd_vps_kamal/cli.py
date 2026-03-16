@@ -13,13 +13,12 @@ from .plugin_config import plugin_config
 
 
 class PluginCLI:
-
     def __init__(self, parser):
         """Add plugin-specific args."""
         group_desc = "Plugin-specific CLI args for dsd-vps-kamal"
         plugin_group = parser.add_argument_group(
             title="Options for dsd-vps-kamal",
-            description = group_desc,
+            description=group_desc,
         )
 
         # plugin_group.add_argument(

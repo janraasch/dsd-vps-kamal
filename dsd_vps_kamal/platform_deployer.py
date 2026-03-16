@@ -1,7 +1,7 @@
 """Manages all VPS Kamal-specific aspects of the deployment process.
 
 Notes:
-- 
+-
 
 Add a new file to the user's project, without using a template:
 
@@ -72,7 +72,9 @@ class PlatformDeployer:
 
     def deploy(self, *args, **options):
         """Coordinate the overall configuration and deployment."""
-        plugin_utils.write_output("\nConfiguring project for deployment to VPS Kamal...")
+        plugin_utils.write_output(
+            "\nConfiguring project for deployment to VPS Kamal..."
+        )
 
         self._validate_platform()
         self._prep_automate_all()
@@ -94,11 +96,9 @@ class PlatformDeployer:
         """
         pass
 
-
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""
         pass
-
 
     def _conclude_automate_all(self):
         """Finish automating the push to VPS Kamal.
