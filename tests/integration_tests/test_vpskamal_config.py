@@ -138,10 +138,7 @@ def test_log_dir(tmp_project):
     assert "INFO: Configuring project for deployment to VPS Kamal..." in log_file_text
 
     assert "INFO: CLI args:" in log_file_text
-    assert (
-        "INFO: Deployment target: VPS Kamal" in log_file_text
-        or "INFO: Deployment target: VPS Kamal" in log_file_text
-    )
+    assert "INFO: Deployment target: VPS via Kamal" in log_file_text
     assert "INFO:   Using plugin: dsd_vps_kamal" in log_file_text
     assert "INFO: Local project name: blog" in log_file_text
     assert "INFO: git status --porcelain" in log_file_text

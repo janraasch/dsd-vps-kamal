@@ -10,22 +10,24 @@ from django.conf import settings
 confirm_automate_all = """
 The --automate-all flag means django-simple-deploy will:
 - ...
-- Commit all changes to your project that are necessary for deployment.
-- Push these changes to VPS Kamal.
+- Commit all changes to your project that are necessary for deployment with Kamal.
+- Run `kamal setup` to setup your VPS for deployment.
+- Run `kamal deploy` to deploy your project to your VPS.
 - Open your deployed project in a new browser tab.
 """
 
 cancel_vpskamal = """
-Okay, cancelling VPS Kamal configuration and deployment.
+Okay, cancelling VPS configuration and deployment.
 """
 
-# DEV: This could be moved to deploy_messages, with an arg for platform and URL.
 cli_not_installed = """
-In order to deploy to VPS Kamal, you need to install the VPS Kamal CLI.
-  See here: ...
+In order to deploy to your VPS using Kamal, you need to install the Kamal CLI.
+  See here: https://kamal-deploy.org/docs/installation/
+  TODO: Add a link to the installation instructions on the plugin README.md.
 After installing the CLI, you can run the deploy command again.
 """
 
+# TODO: Do we need this? Or maybe we can check here that we can access the VPS via SSH?
 cli_logged_out = """
 You are currently logged out of the VPS Kamal CLI. Please log in,
   and then run the deploy command again.
@@ -61,7 +63,7 @@ def success_msg(log_output=""):
         - As you develop your project further:
             - Make local changes
             - Commit your local changes
-            - Run `...` again to push your changes.
+            - Run `kamal deploy` again to push your changes.
     """
     )
 
