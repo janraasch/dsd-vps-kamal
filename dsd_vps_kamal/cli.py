@@ -1,8 +1,6 @@
 """Extends the core django-simple-deploy CLI."""
 
-import json
-import shlex
-import subprocess
+import ipaddress
 
 from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
 from django_simple_deploy.management.commands.utils.command_errors import (
@@ -22,42 +20,35 @@ class PluginCLI:
             description = group_desc,
         )
 
-        # plugin_group.add_argument(
-        #     "--vm-size",
-        #     type=str,
-        #     help="Name for a preset vm-size configuration, ie `shared-cpu-2x`.",
-        #     default="",
-        # )
+        plugin_group.add_argument(
+            "--ip-address",
+            type=str,
+            help="IP address of the VPS to deploy to.",
+            default=None,
+        )
 
 
 def validate_cli(options):
     """Validate options that were passed to CLI."""
-
-    # vm_size = options["vm_size"]
-    # _validate_vm_size(vm_size)
-
-    pass
+    ip_address = options["ip_address"]
+    _validate_ip_address(ip_address)
 
 
 # --- Helper functions ---
 
-# def _validate_vm_size(vm_size):
-#     """Validate the vm size arg that was passed."""
-#     if not vm_size:
-#         return
+def _validate_ip_address(ip_address):
+    """Validate the IP address arg that was passed."""
+    if not ip_address:
+        if dsd_config.unit_testing:
+            return
+        msg = "The --ip-address argument is required."
+        raise DSDCommandError(msg)
 
-#     if not dsd_config.unit_testing:
-#         cmd = "fly platform vm-sizes --json"
-#         cmd_parts = shlex.split(cmd)
-#         output = subprocess.run(cmd_parts, capture_output=True)
-#         allowed_sizes = list(json.loads(output.stdout).keys())
-#     else:
-#         allowed_sizes = ["shared-cup-1x", "shared-cpu-2x"]
+    try:
+        ipaddress.IPv4Address(ip_address)
+    except ipaddress.AddressValueError:
+        msg = f"The --ip-address value '{ip_address}' is not a valid IPv4 address."
+        raise DSDCommandError(msg)
 
-#     if vm_size not in allowed_sizes:
-#         msg = f"The vm-size {vm_size} requested is not available."
-#         msg += f"\n  Allowed sizes: {' '.join(allowed_sizes)}"
-#         raise DSDCommandError(msg)
-
-#     # vm_size is valid. Set the relevant plugin_config attribute.
-#     plugin_config.vm_size = vm_size
+    # ip_address is valid. Set the relevant plugin_config attribute.
+    plugin_config.ip_address = ip_address

@@ -26,6 +26,7 @@ class PluginConfig:
         self.confirm_automate_all_msg = platform_msgs.confirm_automate_all
         self.platform_name = "VPS Kamal"
 
+        self.ip_address = None
 
 # Create plugin_config once right here. This approach keeps from having to pass the config
 # instance between core, plugins, and these utility functions.
