@@ -43,6 +43,7 @@ Add a set of requirements:
         plugin_utils.add_packages(requirements)
 """
 
+import subprocess
 import sys, os, re, json
 from pathlib import Path
 
@@ -92,7 +93,25 @@ class PlatformDeployer:
         Raises:
             DSDCommandError: If we find any reason deployment won't work.
         """
-        pass
+        if not dsd_config.automate_all:
+            return
+
+        ip = plugin_config.ip_address
+        cmd = ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
+               f"root@{ip}", "echo", "ok"]
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        except subprocess.TimeoutExpired:
+            raise DSDCommandError(
+                f"SSH connection to {ip} timed out."
+                f" Ensure the server is reachable and SSH key auth is configured."
+            )
+
+        if result.returncode != 0:
+            msg = f"Could not connect to {ip} via SSH."
+            msg += f"\n  Ensure you can run: ssh root@{ip}"
+            msg += f"\n  stderr: {result.stderr.strip()}"
+            raise DSDCommandError(msg)
 
 
     def _prep_automate_all(self):
