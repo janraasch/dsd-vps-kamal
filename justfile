@@ -8,9 +8,7 @@ test-unit:
 
 # Run integration tests
 test-integration:
-    cd ../django-simple-deploy
-    uv run pytest tests/integration_tests/
-    cd ../dsd-vps-kamal
+    cd ../django-simple-deploy && uv run pytest && cd ../dsd-vps-kamal
 
 # TODO: end-2-end tests
 
