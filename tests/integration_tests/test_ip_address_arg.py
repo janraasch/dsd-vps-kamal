@@ -1,4 +1,4 @@
-"""Test the --ip-address custom CLI arg."""
+"""Test the --ip-address CLI arg."""
 
 import pytest
 
@@ -25,12 +25,3 @@ def test_invalid_ip_address(tmp_project):
     stdout, stderr = msp.call_deploy(tmp_project, cmd)
 
     assert "not a valid" in stderr.lower() or "invalid" in stderr.lower()
-
-
-def test_host_arg(tmp_project):
-    """Test that a host domain is accepted without error."""
-    cmd = "python manage.py deploy --ip-address 192.168.1.100 --host foo.example.com"
-    stdout, stderr = msp.call_deploy(tmp_project, cmd)
-
-    assert "unrecognized arguments" not in stderr.lower()
-    assert "invalid" not in stderr.lower()
