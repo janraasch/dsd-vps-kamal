@@ -27,6 +27,7 @@ class PluginConfig:
         self.platform_name = "VPS via Kamal"
 
         self.ip_address = None
+        self.host = None
 
 # Create plugin_config once right here. This approach keeps from having to pass the config
 # instance between core, plugins, and these utility functions.

@@ -27,11 +27,22 @@ class PluginCLI:
             default=None,
         )
 
+        plugin_group.add_argument(
+            "--host",
+            type=str,
+            help="Host name for Kamal proxy routing (e.g. myapp.example.com).",
+            default=None,
+        )
+
 
 def validate_cli(options):
     """Validate options that were passed to CLI."""
     ip_address = options["ip_address"]
     _validate_ip_address(ip_address)
+
+    host = options["host"]
+    if host:
+        plugin_config.host = host
 
 
 # --- Helper functions ---
