@@ -118,11 +118,12 @@ class PlatformDeployer:
         """Add a Kamal config/deploy.yml file."""
         template_path = self.templates_path / "deploy.yml"
         context = {
-            "project_name": dsd_config.local_project_name,
-            "ip_address": plugin_config.ip_address or "REPLACE_WITH_SERVER_IP",
+            "app_name": dsd_config.local_project_name,
+            "ip_address": plugin_config.ip_address or "__SERVER_IP__",
             "host": plugin_config.host or "",
         }
         contents = plugin_utils.get_template_string(template_path, context)
+        contents = plugin_utils.remove_doubled_blank_lines(contents)
 
         path = dsd_config.project_root / "config" / "deploy.yml"
         path.parent.mkdir(exist_ok=True)
