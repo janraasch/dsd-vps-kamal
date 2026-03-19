@@ -1,0 +1,11 @@
+service: blog
+
+image: blog
+
+servers:
+  web:
+    hosts:
+      - REPLACE_WITH_SERVER_IP
+
+proxy:
+  app_port: 8000

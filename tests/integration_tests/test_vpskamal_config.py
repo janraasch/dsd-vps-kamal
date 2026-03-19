@@ -87,25 +87,10 @@ def test_gitignore(tmp_project):
 
 # --- Test VPS Kamal-specific files ---
 
-# Example test for a platform-specicific file such as Fly's Dockerfile
-# def test_creates_dockerfile(tmp_project, pkg_manager):
-#     """Verify that dockerfile is created correctly."""
-#     if pkg_manager == "req_txt":
-#         hf.check_reference_file(tmp_project, "dockerfile", "dsd-flyio")
-#     elif pkg_manager == "poetry":
-#         hf.check_reference_file(
-#             tmp_project,
-#             "dockerfile",
-#             "dsd-flyio",
-#             reference_filename="poetry.dockerfile",
-#         )
-#     elif pkg_manager == "pipenv":
-#         hf.check_reference_file(
-#             tmp_project,
-#             "dockerfile",
-#             "dsd-flyio",
-#             reference_filename="pipenv.dockerfile",
-#         )
+
+def test_deploy_yml(tmp_project):
+    """Verify that config/deploy.yml is created correctly."""
+    hf.check_reference_file(tmp_project, "config/deploy.yml", "dsd-vps-kamal")
 
 
 # --- Test logs ---

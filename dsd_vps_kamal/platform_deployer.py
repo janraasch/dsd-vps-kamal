@@ -77,8 +77,8 @@ class PlatformDeployer:
 
         self._validate_platform()
         self._prep_automate_all()
-
-        # Configure project for deployment to VPS Kamal
+        
+        self._add_deploy_yml()
 
         self._conclude_automate_all()
         self._show_success_message()
@@ -113,6 +113,20 @@ class PlatformDeployer:
             msg += f"\n  stderr: {result.stderr.strip()}"
             raise DSDCommandError(msg)
 
+
+    def _add_deploy_yml(self):
+        """Add a Kamal config/deploy.yml file."""
+        template_path = self.templates_path / "deploy.yml"
+        context = {
+            "project_name": dsd_config.local_project_name,
+            "ip_address": plugin_config.ip_address or "REPLACE_WITH_SERVER_IP",
+            "host": plugin_config.host or "",
+        }
+        contents = plugin_utils.get_template_string(template_path, context)
+
+        path = dsd_config.project_root / "config" / "deploy.yml"
+        path.parent.mkdir(exist_ok=True)
+        plugin_utils.add_file(path, contents)
 
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""

@@ -1,0 +1,12 @@
+service: {{ project_name }}
+
+image: {{ project_name }}
+
+servers:
+  web:
+    hosts:
+      - {{ ip_address }}
+
+proxy:
+{% if host %}  host: {{ host }}
+{% endif %}  app_port: 8000
