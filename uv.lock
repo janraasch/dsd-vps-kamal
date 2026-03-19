@@ -385,6 +385,16 @@ dependencies = [
     { name = "toml" },
 ]
 
+[package.optional-dependencies]
+dev = [
+    { name = "build" },
+    { name = "pytest", version = "8.4.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
+    { name = "pytest", version = "9.0.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "pytest-mock" },
+    { name = "ruff" },
+    { name = "twine" },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "build" },
@@ -397,12 +407,18 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "build", marker = "extra == 'dev'", specifier = ">=1.2.1" },
     { name = "django", specifier = ">=4.2" },
     { name = "django-simple-deploy", specifier = ">=0.9.0" },
     { name = "pluggy", specifier = ">=1.5.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.0" },
+    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3.15.0" },
     { name = "requests", specifier = ">=2.32.2" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8.0" },
     { name = "toml", specifier = ">=0.10.2" },
+    { name = "twine", marker = "extra == 'dev'", specifier = ">=5.1.1" },
 ]
+provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
 dev = [
