@@ -1,0 +1,27 @@
+name: integration_tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install just
+        uses: extractions/setup-just@v3
+      - name: Install uv and set the Python version
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.14"
+      - name: Set up environment
+        run: just ci-setup
+      - name: Configure Git
+        run: |
+          git config --global user.email "ci_tester@example.com"
+          git config --global user.name "Ci Tester"
+          git config --global init.defaultBranch main
+      - name: Run integration tests
+        run: just test-integration

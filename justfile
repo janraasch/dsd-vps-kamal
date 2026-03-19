@@ -26,6 +26,9 @@ format:
     uv run ruff format .
     uv run ruff check --fix .
 
+# Set up CI environment (clone core + install deps)
+ci-setup: dev-setup
+
 # CI: lint + test
 ci: lint test
 
