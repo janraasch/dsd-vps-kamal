@@ -9,7 +9,15 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout dsd-vps-kamal
+        uses: actions/checkout@v6
+        with:
+          path: dsd-vps-kamal
+      - name: Checkout django-simple-deploy
+        uses: actions/checkout@v6
+        with:
+          repository: django-simple-deploy/django-simple-deploy
+          path: django-simple-deploy
       - name: Install just
         uses: extractions/setup-just@v3
       - name: Install uv and set the Python version
@@ -17,11 +25,11 @@ jobs:
         with:
           python-version: "3.14"
       - name: Set up environment
-        run: just ci-setup
+        run: cd dsd-vps-kamal && just ci-setup
       - name: Configure Git
         run: |
           git config --global user.email "ci_tester@example.com"
           git config --global user.name "Ci Tester"
           git config --global init.defaultBranch main
       - name: Run integration tests
-        run: just test-integration
+        run: cd dsd-vps-kamal && just test-integration
