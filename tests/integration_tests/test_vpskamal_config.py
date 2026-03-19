@@ -88,6 +88,27 @@ def test_gitignore(tmp_project):
 # --- Test VPS Kamal-specific files ---
 
 
+def test_kamal_secrets(tmp_project):
+    """Verify that .kamal/secrets is created with required secrets."""
+    secrets_path = tmp_project / ".kamal" / "secrets"
+    assert secrets_path.exists()
+    contents = secrets_path.read_text()
+
+    # Check comments
+    assert "Secrets defined here are available for reference" in contents
+
+    # Check secrets are present
+    assert "SECRET_KEY=" in contents
+    assert "DATABASE_URL=" in contents
+    assert "POSTGRES_PASSWORD=" in contents
+
+    # DATABASE_URL has predictable structure (app_name is "blog" in test project)
+    for line in contents.splitlines():
+        if line.startswith("DATABASE_URL="):
+            assert line.startswith("DATABASE_URL=postgres://blog:")
+            assert "@blog-postgres:5432/blog" in line
+
+
 def test_deploy_yml(tmp_project):
     """Verify that config/deploy.yml is created correctly."""
     hf.check_reference_file(tmp_project, "config/deploy.yml", "dsd-vps-kamal")

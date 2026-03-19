@@ -47,6 +47,8 @@ import subprocess
 import sys, os, re, json
 from pathlib import Path
 
+from django.core.management.utils import get_random_secret_key
+from django.utils.crypto import get_random_string
 from django.utils.safestring import mark_safe
 
 import requests
@@ -77,7 +79,9 @@ class PlatformDeployer:
 
         self._validate_platform()
         self._prep_automate_all()
-        
+
+        self._modify_gitignore()
+        self._add_kamal_secrets()
         self._add_deploy_yml()
 
         self._conclude_automate_all()
@@ -126,6 +130,48 @@ class PlatformDeployer:
         contents = plugin_utils.remove_doubled_blank_lines(contents)
 
         path = dsd_config.project_root / "config" / "deploy.yml"
+        path.parent.mkdir(exist_ok=True)
+        plugin_utils.add_file(path, contents)
+
+    def _modify_gitignore(self):
+        """Add .kamal/secrets to .gitignore."""
+        gitignore_path = dsd_config.git_path / ".gitignore"
+        pattern = ".kamal/secrets"
+
+        if not gitignore_path.exists():
+            gitignore_path.write_text(f"{pattern}\n", encoding="utf-8")
+            plugin_utils.write_output(f"Created .gitignore with {pattern}")
+            return
+
+        contents = gitignore_path.read_text()
+        if pattern not in contents:
+            contents += f"\n{pattern}\n"
+            gitignore_path.write_text(contents)
+            plugin_utils.write_output(f"Added {pattern} to .gitignore")
+
+    def _add_kamal_secrets(self):
+        """Create .kamal/secrets with generated credentials."""
+        secret_key = get_random_secret_key()
+        postgres_password = get_random_string(length=24)
+        app_name = dsd_config.local_project_name
+
+        database_url = (
+            f"postgres://{app_name}:{postgres_password}"
+            f"@{app_name}-postgres:5432/{app_name}"
+        )
+
+        # mark_safe is required here because Django's template engine auto-escapes
+        # by default. Generated secrets can contain <, >, &, etc. which would be
+        # mangled into &lt;, &gt;, &amp; without mark_safe.
+        template_path = self.templates_path / "kamal_secrets"
+        context = {
+            "secret_key": mark_safe(secret_key),
+            "database_url": mark_safe(database_url),
+            "postgres_password": mark_safe(postgres_password),
+        }
+        contents = plugin_utils.get_template_string(template_path, context)
+
+        path = dsd_config.project_root / ".kamal" / "secrets"
         path.parent.mkdir(exist_ok=True)
         plugin_utils.add_file(path, contents)
 

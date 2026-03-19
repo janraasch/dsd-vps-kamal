@@ -8,3 +8,5 @@ __pycache__/
 db.sqlite3
 
 dsd_logs/
+
+.kamal/secrets
