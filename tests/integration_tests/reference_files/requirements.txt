@@ -9,3 +9,7 @@ sqlparse==0.5.2
 urllib3==2.2.3
 
 django-simple-deploy=={current-version}
+gunicorn
+psycopg2-binary
+dj-database-url
+whitenoise

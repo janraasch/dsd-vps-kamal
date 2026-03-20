@@ -84,6 +84,7 @@ class PlatformDeployer:
         self._add_kamal_secrets()
         self._add_deploy_yml()
         self._add_dockerfile()
+        self._add_requirements()
         self._modify_settings()
 
         self._conclude_automate_all()
@@ -187,6 +188,11 @@ class PlatformDeployer:
 
         path = dsd_config.project_root / "Dockerfile"
         plugin_utils.add_file(path, contents)
+
+    def _add_requirements(self):
+        """Add requirements for deploying to VPS via Kamal."""
+        requirements = ["gunicorn", "psycopg2-binary", "dj-database-url", "whitenoise"]
+        plugin_utils.add_packages(requirements)
 
     def _modify_settings(self):
         """Add VPS Kamal-specific settings."""
