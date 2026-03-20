@@ -83,6 +83,7 @@ class PlatformDeployer:
         self._modify_gitignore()
         self._add_kamal_secrets()
         self._add_deploy_yml()
+        self._add_dockerfile()
 
         self._conclude_automate_all()
         self._show_success_message()
@@ -173,6 +174,17 @@ class PlatformDeployer:
 
         path = dsd_config.project_root / ".kamal" / "secrets"
         path.parent.mkdir(exist_ok=True)
+        plugin_utils.add_file(path, contents)
+
+    def _add_dockerfile(self):
+        """Add a Dockerfile for building the deployment image."""
+        template_path = self.templates_path / "dockerfile"
+        context = {
+            "django_project_name": dsd_config.local_project_name,
+        }
+        contents = plugin_utils.get_template_string(template_path, context)
+
+        path = dsd_config.project_root / "Dockerfile"
         plugin_utils.add_file(path, contents)
 
     def _prep_automate_all(self):
