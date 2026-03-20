@@ -5,6 +5,16 @@ import os
 
 if os.environ.get("ON_VPS"):
     import dj_database_url
+    from django.http import HttpResponse
+
+    class HealthCheckMiddleware:
+        def __init__(self, get_response):
+            self.get_response = get_response
+
+        def __call__(self, request):
+            if request.path in ("/kamal/up", "/kamal/up/"):
+                return HttpResponse("OK")
+            return self.get_response(request)
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
 
@@ -22,6 +32,7 @@ if os.environ.get("ON_VPS"):
     STATIC_URL = "/static/"
 
     i = MIDDLEWARE.index("django.middleware.security.SecurityMiddleware")
+    MIDDLEWARE.insert(i, "{{settings_module_path}}.HealthCheckMiddleware")
     MIDDLEWARE.insert(i + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
     CSRF_TRUSTED_ORIGINS = ["https://{{ ip_address }}"{% if host %}, "https://{{ host }}"{% endif %}]

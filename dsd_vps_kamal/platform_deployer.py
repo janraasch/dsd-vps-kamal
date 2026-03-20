@@ -221,6 +221,7 @@ class PlatformDeployer:
         context = {
             "ip_address": plugin_config.ip_address or "__SERVER_IP__",
             "host": plugin_config.host or "",
+            "settings_module_path": f"{dsd_config.local_project_name}.settings",
         }
         plugin_utils.modify_settings_file(template_path, context)
 
