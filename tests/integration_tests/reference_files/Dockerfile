@@ -28,6 +28,7 @@ ENV PYTHONUNBUFFERED=1
 COPY --from=builder /usr/local /usr/local
 
 COPY . /code/
+RUN chmod +x /code/start-web.sh
 
 RUN ON_VPS=TRUE SECRET_KEY=build-placeholder DATABASE_URL=sqlite://:memory: \
     python manage.py collectstatic --noinput
@@ -38,4 +39,4 @@ USER app
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "2", "blog.wsgi"]
+CMD ["/code/start-web.sh"]

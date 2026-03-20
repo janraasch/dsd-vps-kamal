@@ -84,6 +84,7 @@ class PlatformDeployer:
         self._add_kamal_secrets()
         self._add_deploy_yml()
         self._add_dockerfile()
+        self._add_start_script()
         self._add_requirements()
         self._modify_settings()
 
@@ -187,6 +188,17 @@ class PlatformDeployer:
         contents = plugin_utils.get_template_string(template_path, context)
 
         path = dsd_config.project_root / "Dockerfile"
+        plugin_utils.add_file(path, contents)
+
+    def _add_start_script(self):
+        """Add start-web.sh script that runs migrations then starts gunicorn."""
+        template_path = self.templates_path / "start-web.sh"
+        context = {
+            "django_project_name": dsd_config.local_project_name,
+        }
+        contents = plugin_utils.get_template_string(template_path, context)
+
+        path = dsd_config.project_root / "start-web.sh"
         plugin_utils.add_file(path, contents)
 
     def _add_requirements(self):

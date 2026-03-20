@@ -114,6 +114,11 @@ def test_dockerfile(tmp_project):
     hf.check_reference_file(tmp_project, "Dockerfile", "dsd-vps-kamal")
 
 
+def test_start_web_sh(tmp_project):
+    """Verify that start-web.sh is created correctly."""
+    hf.check_reference_file(tmp_project, "start-web.sh", "dsd-vps-kamal")
+
+
 def test_deploy_yml(tmp_project):
     """Verify that config/deploy.yml is created correctly."""
     hf.check_reference_file(tmp_project, "config/deploy.yml", "dsd-vps-kamal")
