@@ -1,0 +1,23 @@
+# See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
+
+# Version control
+.git
+.github
+
+# Python
+.venv
+__pycache__
+*.py[cod]
+*.pyo
+.ruff_cache
+
+# Database files.
+*.sqlite3
+
+# Kamal files.
+config/deploy*.yml
+.kamal
+
+# Docker-related files
+.dockerignore
+Dockerfile*

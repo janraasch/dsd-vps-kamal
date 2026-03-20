@@ -114,6 +114,16 @@ def test_dockerfile(tmp_project):
     hf.check_reference_file(tmp_project, "Dockerfile", "dsd-vps-kamal")
 
 
+def test_dockerignore(tmp_project):
+    """Verify that .dockerignore is created correctly."""
+    hf.check_reference_file(
+        tmp_project,
+        ".dockerignore",
+        "dsd-vps-kamal",
+        reference_filename="dockerignore",
+    )
+
+
 def test_start_web_sh(tmp_project):
     """Verify that start-web.sh is created correctly."""
     hf.check_reference_file(tmp_project, "start-web.sh", "dsd-vps-kamal")

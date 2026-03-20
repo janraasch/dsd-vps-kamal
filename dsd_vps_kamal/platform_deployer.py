@@ -83,6 +83,7 @@ class PlatformDeployer:
         self._modify_gitignore()
         self._add_kamal_secrets()
         self._add_deploy_yml()
+        self._add_dockerignore()
         self._add_dockerfile()
         self._add_start_script()
         self._add_requirements()
@@ -188,6 +189,14 @@ class PlatformDeployer:
         contents = plugin_utils.get_template_string(template_path, context)
 
         path = dsd_config.project_root / "Dockerfile"
+        plugin_utils.add_file(path, contents)
+
+    def _add_dockerignore(self):
+        """Add a .dockerignore file for a clean and secure build context."""
+        template_path = self.templates_path / "dockerignore"
+        contents = plugin_utils.get_template_string(template_path, {})
+
+        path = dsd_config.project_root / ".dockerignore"
         plugin_utils.add_file(path, contents)
 
     def _add_start_script(self):
