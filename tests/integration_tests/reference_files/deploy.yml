@@ -43,7 +43,7 @@ accessories:
   postgres:
     image: postgres:17
     host: __SERVER_IP__
-    port: "127.0.0.1:5432"
+    port: "127.0.0.1:5432:5432"
     directories:
       - data:/var/lib/postgresql/data
     env:
