@@ -18,6 +18,7 @@ def test_host_written_to_deploy_yml(tmp_project):
     path = tmp_project / "config" / "deploy.yml"
     contents = path.read_text()
     assert "host: foo.example.com" in contents
+    assert "  ssl: true" in contents
 
     # Verify host is inside the proxy section.
     lines = contents.splitlines()

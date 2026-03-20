@@ -31,6 +31,17 @@ def test_ip_address_in_settings(tmp_project):
     assert 'CSRF_TRUSTED_ORIGINS = ["https://192.168.1.100"]' in contents
 
 
+def test_no_host_does_not_enable_proxy_ssl(tmp_project):
+    """Test that proxy SSL is not enabled unless --host is provided."""
+    cmd = "python manage.py deploy --ip-address 192.168.1.100"
+    msp.call_deploy(tmp_project, cmd)
+
+    path = tmp_project / "config" / "deploy.yml"
+    contents = path.read_text()
+    assert "proxy:" in contents
+    assert "ssl: true" not in contents
+
+
 def test_invalid_ip_address(tmp_project):
     """Test that an invalid IP address raises an error."""
     cmd = "python manage.py deploy --ip-address not-an-ip"
