@@ -19,6 +19,18 @@ def test_valid_ip_address(tmp_project):
     assert "error" not in stderr.lower()
 
 
+def test_ip_address_in_settings(tmp_project):
+    """Test that a valid IP address is written to settings.py."""
+    cmd = "python manage.py deploy --ip-address 192.168.1.100"
+    msp.call_deploy(tmp_project, cmd)
+
+    path = tmp_project / "blog" / "settings.py"
+    contents = path.read_text()
+    assert '"192.168.1.100"' in contents
+    assert 'ALLOWED_HOSTS = ["192.168.1.100"]' in contents
+    assert 'CSRF_TRUSTED_ORIGINS = ["https://192.168.1.100"]' in contents
+
+
 def test_invalid_ip_address(tmp_project):
     """Test that an invalid IP address raises an error."""
     cmd = "python manage.py deploy --ip-address not-an-ip"

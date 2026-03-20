@@ -84,6 +84,7 @@ class PlatformDeployer:
         self._add_kamal_secrets()
         self._add_deploy_yml()
         self._add_dockerfile()
+        self._modify_settings()
 
         self._conclude_automate_all()
         self._show_success_message()
@@ -186,6 +187,15 @@ class PlatformDeployer:
 
         path = dsd_config.project_root / "Dockerfile"
         plugin_utils.add_file(path, contents)
+
+    def _modify_settings(self):
+        """Add VPS Kamal-specific settings."""
+        template_path = self.templates_path / "settings.py"
+        context = {
+            "ip_address": plugin_config.ip_address or "__SERVER_IP__",
+            "host": plugin_config.host or "",
+        }
+        plugin_utils.modify_settings_file(template_path, context)
 
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""

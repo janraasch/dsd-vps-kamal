@@ -25,3 +25,14 @@ def test_host_written_to_deploy_yml(tmp_project):
     host_index = next(i for i, l in enumerate(lines) if "host: foo.example.com" in l)
     assert host_index > proxy_index
     assert lines[host_index].startswith("  ")
+
+
+def test_host_written_to_settings(tmp_project):
+    """Test that --host is written to ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS in settings.py."""
+    cmd = "python manage.py deploy --ip-address 192.168.1.100 --host foo.example.com"
+    msp.call_deploy(tmp_project, cmd)
+
+    path = tmp_project / "blog" / "settings.py"
+    contents = path.read_text()
+    assert 'ALLOWED_HOSTS = ["192.168.1.100", "foo.example.com"]' in contents
+    assert 'CSRF_TRUSTED_ORIGINS = ["https://192.168.1.100", "https://foo.example.com"]' in contents

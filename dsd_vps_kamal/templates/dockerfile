@@ -29,7 +29,7 @@ COPY --from=builder /usr/local /usr/local
 
 COPY . /code/
 
-RUN SECRET_KEY=build-placeholder DATABASE_URL=sqlite://:memory: \
+RUN ON_VPS=TRUE SECRET_KEY=build-placeholder DATABASE_URL=sqlite://:memory: \
     python manage.py collectstatic --noinput
 
 RUN groupadd -r app && useradd -r -g app -d /code -s /sbin/nologin app && \
