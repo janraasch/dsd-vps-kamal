@@ -35,6 +35,17 @@ You can log in from  the command line:
   $ ...
 """
 
+vps_kamal_settings_found = """
+There is already a VPS Kamal-specific settings block in settings.py. Is it okay to
+overwrite this block, and everything that follows in settings.py?
+"""
+
+cant_overwrite_settings = """
+In order to configure the project for deployment, we need to write a VPS Kamal-specific
+settings block. Please remove the current VPS Kamal-specific settings, and then run
+the deploy command again.
+"""
+
 
 # --- Dynamic strings ---
 # These need to be generated in functions, to display information that's determined as

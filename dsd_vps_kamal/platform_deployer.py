@@ -105,6 +105,8 @@ class PlatformDeployer:
         if not dsd_config.automate_all:
             return
 
+        self._check_vps_kamal_settings()
+
         ip = plugin_config.ip_address
         cmd = ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
                f"root@{ip}", "echo", "ok"]
@@ -122,6 +124,15 @@ class PlatformDeployer:
             msg += f"\n  stderr: {result.stderr.strip()}"
             raise DSDCommandError(msg)
 
+    def _check_vps_kamal_settings(self):
+        """Check to see if a VPS Kamal settings block already exists."""
+        start_line = "# VPS Kamal settings."
+        plugin_utils.check_settings(
+            "# VPS Kamal settings.",
+            start_line,
+            platform_msgs.vps_kamal_settings_found,
+            platform_msgs.cant_overwrite_settings,
+        )
 
     def _add_deploy_yml(self):
         """Add a Kamal config/deploy.yml file."""
