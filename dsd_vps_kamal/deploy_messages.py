@@ -22,8 +22,11 @@ Okay, cancelling VPS configuration and deployment.
 
 cli_not_installed = """
 In order to deploy to your VPS using Kamal, you need to install the Kamal CLI.
-  See here: https://kamal-deploy.org/docs/installation/
-  TODO: Add a link to the installation instructions on the plugin README.md.
+  You can install it directly as a Ruby gem:
+    $ gem install kamal
+  Or via rv (https://github.com/spinel-coop/rv):
+    $ rv tool install kamal
+  See also: https://kamal-deploy.org/docs/installation/
 After installing the CLI, you can run the deploy command again.
 """
 

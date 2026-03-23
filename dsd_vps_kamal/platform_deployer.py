@@ -71,6 +71,35 @@ class PlatformDeployer:
         ip = plugin_config.ip_address
         self._check_ssh_connection(ip)
 
+        self._validate_cli()
+
+    def _validate_cli(self):
+        """Validate that Kamal is installed.
+
+        Checks for Kamal in two ways:
+        1. Directly via `kamal version` (standard gem install).
+        2. Via rv's `rvx kamal version` (rv tool-managed install).
+
+        Stores the working command prefix on plugin_config.kamal_cmd so the
+        rest of the plugin can invoke Kamal correctly.
+        """
+        for cmd_prefix in ("kamal", "rvx kamal"):
+            cmd = f"{cmd_prefix} version"
+            try:
+                output_obj = plugin_utils.run_quick_command(cmd)
+            except FileNotFoundError:
+                continue
+
+            plugin_utils.log_info(output_obj)
+
+            if output_obj.returncode:
+                continue
+
+            plugin_config.kamal_cmd = cmd_prefix
+            return
+
+        raise DSDCommandError(platform_msgs.cli_not_installed)
+
     def _check_ssh_connection(self, ip):
         """Check that the target VPS is reachable via SSH."""
         cmd = ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",

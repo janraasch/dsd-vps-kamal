@@ -11,6 +11,7 @@ import pytest
 from django_simple_deploy.management.commands.utils.command_errors import DSDCommandError
 
 from dsd_vps_kamal.platform_deployer import PlatformDeployer, dsd_config
+from dsd_vps_kamal.plugin_config import plugin_config
 from dsd_vps_kamal import deploy_messages as platform_msgs
 
 
@@ -168,3 +169,88 @@ def test_add_kamal_secrets(tmp_path, monkeypatch):
     for line in contents.splitlines():
         if line.startswith("POSTGRES_PASSWORD="):
             assert len(line.split("=", 1)[1]) >= 20
+
+
+# --- Tests for _validate_cli ---
+
+
+def test_validate_cli_finds_kamal_directly(mocker):
+    """_validate_cli succeeds when `kamal version` works directly."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    mock_run.return_value = mocker.Mock(returncode=0)
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
+
+    deployer = PlatformDeployer()
+    deployer._validate_cli()
+
+    mock_run.assert_called_once_with("kamal version")
+    assert plugin_config.kamal_cmd == "kamal"
+
+
+def test_validate_cli_finds_kamal_via_rvx(mocker):
+    """_validate_cli falls back to `rvx kamal version` when `kamal` is not found."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    # First call (`kamal version`) raises FileNotFoundError;
+    # second call (`rvx kamal version`) succeeds.
+    mock_run.side_effect = [FileNotFoundError, mocker.Mock(returncode=0)]
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
+
+    deployer = PlatformDeployer()
+    deployer._validate_cli()
+
+    assert mock_run.call_count == 2
+    mock_run.assert_any_call("kamal version")
+    mock_run.assert_any_call("rvx kamal version")
+    assert plugin_config.kamal_cmd == "rvx kamal"
+
+
+def test_validate_cli_finds_kamal_via_rvx_returncode(mocker):
+    """_validate_cli falls back to rvx when `kamal version` returns non-zero."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    # First call returns non-zero; second succeeds.
+    mock_run.side_effect = [
+        mocker.Mock(returncode=1),
+        mocker.Mock(returncode=0),
+    ]
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
+
+    deployer = PlatformDeployer()
+    deployer._validate_cli()
+
+    assert mock_run.call_count == 2
+    assert plugin_config.kamal_cmd == "rvx kamal"
+
+
+def test_validate_cli_neither_found(mocker):
+    """_validate_cli raises DSDCommandError when neither kamal nor rvx is found."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    mock_run.side_effect = FileNotFoundError
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
+
+    deployer = PlatformDeployer()
+    with pytest.raises(DSDCommandError):
+        deployer._validate_cli()
+
+
+def test_validate_cli_rvx_nonzero_returncode(mocker):
+    """_validate_cli raises DSDCommandError when rvx kamal also fails."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    mock_run.side_effect = [
+        FileNotFoundError,
+        mocker.Mock(returncode=1),
+    ]
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
+
+    deployer = PlatformDeployer()
+    with pytest.raises(DSDCommandError):
+        deployer._validate_cli()

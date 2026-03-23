@@ -28,6 +28,7 @@ class PluginConfig:
 
         self.ip_address = None
         self.host = None
+        self.kamal_cmd = None
 
 # Create plugin_config once right here. This approach keeps from having to pass the config
 # instance between core, plugins, and these utility functions.
