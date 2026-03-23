@@ -63,6 +63,7 @@ class PlatformDeployer:
         Raises:
             DSDCommandError: If we find any reason deployment won't work.
         """
+        # TODO: We might actually change this to if not dsd_config.automate_all.
         if dsd_config.unit_testing:
             return
 
