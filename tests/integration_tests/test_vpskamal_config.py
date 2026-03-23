@@ -161,7 +161,7 @@ def test_log_dir(tmp_project):
     # DEV: Update these for more platform-specific log messages.
     # Spot check for opening log messages.
     assert "INFO: Logging run of `manage.py deploy`..." in log_file_text
-    assert "INFO: Configuring project for deployment to VPS Kamal..." in log_file_text
+    assert "INFO: Configuring project for deployment to VPS using Kamal..." in log_file_text
 
     assert "INFO: CLI args:" in log_file_text
     assert "INFO: Deployment target: VPS via Kamal" in log_file_text

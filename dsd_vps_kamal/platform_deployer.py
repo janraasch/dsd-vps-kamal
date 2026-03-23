@@ -1,46 +1,4 @@
-"""Manages all VPS Kamal-specific aspects of the deployment process.
-
-Notes:
-- 
-
-Add a new file to the user's project, without using a template:
-
-    def _add_dockerignore(self):
-        # Add a dockerignore file, based on user's local project environmnet.
-        path = dsd_config.project_root / ".dockerignore"
-        dockerignore_str = self._build_dockerignore()
-        plugin_utils.add_file(path, dockerignore_str)
-
-Add a new file to the user's project, using a template:
-
-    def _add_dockerfile(self):
-        # Add a minimal dockerfile.
-        template_path = self.templates_path / "dockerfile_example"
-        context = {
-            "django_project_name": dsd_config.local_project_name,
-        }
-        contents = plugin_utils.get_template_string(template_path, context)
-
-        # Write file to project.
-        path = dsd_config.project_root / "Dockerfile"
-        plugin_utils.add_file(path, contents)
-
-Modify user's settings file:
-
-    def _modify_settings(self):
-        # Add platformsh-specific settings.
-        template_path = self.templates_path / "settings.py"
-        context = {
-            "deployed_project_name": self._get_deployed_project_name(),
-        }
-        plugin_utils.modify_settings_file(template_path, context)
-
-Add a set of requirements:
-
-    def _add_requirements(self):
-        # Add requirements for deploying to Fly.io.
-        requirements = ["gunicorn", "psycopg2-binary", "dj-database-url", "whitenoise"]
-        plugin_utils.add_packages(requirements)
+"""Manages all Kamal-powered VPS-specific aspects of the deployment process.
 """
 
 import subprocess
@@ -62,10 +20,10 @@ from django_simple_deploy.management.commands.utils.command_errors import DSDCom
 
 
 class PlatformDeployer:
-    """Perform the initial deployment to VPS Kamal
+    """Perform the initial deployment to a VPS powered by Kamal
 
     If --automate-all is used, carry out an actual deployment.
-    If not, do all configuration work so the user only has to commit changes, and ...
+    If not, do all configuration work so the user only has to commit changes, and run `kamal setup`.
     """
 
     def __init__(self):
@@ -75,7 +33,7 @@ class PlatformDeployer:
 
     def deploy(self, *args, **options):
         """Coordinate the overall configuration and deployment."""
-        plugin_utils.write_output("\nConfiguring project for deployment to VPS Kamal...")
+        plugin_utils.write_output("\nConfiguring project for deployment to VPS using Kamal...")
 
         self._validate_platform()
         self._prep_automate_all()
@@ -95,7 +53,10 @@ class PlatformDeployer:
     # --- Helper methods for deploy() ---
 
     def _validate_platform(self):
-        """Make sure the local environment and project supports deployment to VPS Kamal.
+        """Make sure the local environment and project supports deployment to a VPS powered by Kamal.
+
+        Make sure Kamal is installed. 
+        Make sure the VPS is reachable via SSH.
 
         Returns:
             None
