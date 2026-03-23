@@ -102,7 +102,7 @@ class PlatformDeployer:
         Raises:
             DSDCommandError: If we find any reason deployment won't work.
         """
-        if not dsd_config.automate_all:
+        if dsd_config.unit_testing:
             return
 
         self._check_vps_kamal_settings()
