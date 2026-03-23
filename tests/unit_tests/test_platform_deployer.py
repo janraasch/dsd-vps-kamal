@@ -15,9 +15,9 @@ from dsd_vps_kamal.plugin_config import plugin_config
 from dsd_vps_kamal import deploy_messages as platform_msgs
 
 
-def test_validate_platform_skipped_without_automate_all(monkeypatch):
-    """_validate_platform is skipped when automate_all is False."""
-    monkeypatch.setattr(dsd_config, "automate_all", False)
+def test_validate_platform_skipped_when_unit_testing(monkeypatch):
+    """_validate_platform is skipped when unit_testing is True."""
+    monkeypatch.setattr(dsd_config, "unit_testing", True)
 
     deployer = PlatformDeployer()
     # Should not raise any exception, even without an IP configured.
