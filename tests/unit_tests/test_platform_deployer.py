@@ -6,13 +6,12 @@ following the pythonanywhere pattern.
 
 import subprocess
 import sys
-from pathlib import Path
 
 import pytest
 from django_simple_deploy.management.commands.utils.command_errors import DSDCommandError
 
 from dsd_vps_kamal.platform_deployer import PlatformDeployer, dsd_config
-from dsd_vps_kamal.plugin_config import plugin_config
+from dsd_vps_kamal import deploy_messages as platform_msgs
 
 
 def test_validate_platform_skipped_without_automate_all(monkeypatch):
@@ -24,16 +23,30 @@ def test_validate_platform_skipped_without_automate_all(monkeypatch):
     deployer._validate_platform()
 
 
-def test_validate_platform_ssh_succeeds(monkeypatch, mocker):
-    """_validate_platform succeeds when SSH connection works."""
-    monkeypatch.setattr(dsd_config, "automate_all", True)
-    monkeypatch.setattr(plugin_config, "ip_address", "192.168.1.100")
+def test_check_vps_kamal_settings_calls_check_settings(mocker):
+    """_check_vps_kamal_settings calls check_settings with expected args."""
+    mock_check = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.check_settings")
+
+    deployer = PlatformDeployer()
+    deployer._check_vps_kamal_settings()
+
+    mock_check.assert_called_once_with(
+        "# VPS Kamal settings.",
+        "# VPS Kamal settings.",
+        platform_msgs.vps_kamal_settings_found,
+        platform_msgs.cant_overwrite_settings,
+    )
+
+
+def test_check_ssh_connection_succeeds(mocker):
+    """_check_ssh_connection succeeds when SSH connection works."""
+    ip = "192.168.1.100"
 
     mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.subprocess.run")
     mock_run.return_value = mocker.Mock(returncode=0)
 
     deployer = PlatformDeployer()
-    deployer._validate_platform()
+    deployer._check_ssh_connection(ip)
 
     mock_run.assert_called_once_with(
         ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
@@ -44,30 +57,28 @@ def test_validate_platform_ssh_succeeds(monkeypatch, mocker):
     )
 
 
-def test_validate_platform_ssh_fails(monkeypatch, mocker):
-    """_validate_platform raises error when SSH connection fails."""
-    monkeypatch.setattr(dsd_config, "automate_all", True)
-    monkeypatch.setattr(plugin_config, "ip_address", "192.168.1.100")
+def test_check_ssh_connection_fails(mocker):
+    """_check_ssh_connection raises error when SSH connection fails."""
+    ip = "192.168.1.100"
 
     mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.subprocess.run")
     mock_run.return_value = mocker.Mock(returncode=255, stderr="Permission denied")
 
     deployer = PlatformDeployer()
     with pytest.raises(DSDCommandError, match="Could not connect"):
-        deployer._validate_platform()
+        deployer._check_ssh_connection(ip)
 
 
-def test_validate_platform_ssh_timeout(monkeypatch, mocker):
-    """_validate_platform raises error when SSH connection times out."""
-    monkeypatch.setattr(dsd_config, "automate_all", True)
-    monkeypatch.setattr(plugin_config, "ip_address", "192.168.1.100")
+def test_check_ssh_connection_timeout(mocker):
+    """_check_ssh_connection raises error when SSH connection times out."""
+    ip = "192.168.1.100"
 
     mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.subprocess.run")
     mock_run.side_effect = subprocess.TimeoutExpired(cmd="ssh", timeout=10)
 
     deployer = PlatformDeployer()
     with pytest.raises(DSDCommandError, match="timed out"):
-        deployer._validate_platform()
+        deployer._check_ssh_connection(ip)
 
 
 # --- Tests for _modify_gitignore ---

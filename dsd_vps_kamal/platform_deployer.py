@@ -108,6 +108,10 @@ class PlatformDeployer:
         self._check_vps_kamal_settings()
 
         ip = plugin_config.ip_address
+        self._check_ssh_connection(ip)
+
+    def _check_ssh_connection(self, ip):
+        """Check that the target VPS is reachable via SSH."""
         cmd = ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
                f"root@{ip}", "echo", "ok"]
         try:
