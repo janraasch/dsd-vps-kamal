@@ -239,7 +239,8 @@ class PlatformDeployer:
         """Finish automating the push to VPS Kamal.
 
         - Commit all changes.
-        - ...
+        - Run `kamal setup`.
+        - Set deployed URL.
         """
         # Making this check here lets deploy() be cleaner.
         if not dsd_config.automate_all:
@@ -248,10 +249,15 @@ class PlatformDeployer:
         plugin_utils.commit_changes()
 
         # Push project.
-        plugin_utils.write_output("  Deploying to VPS Kamal...")
+        plugin_utils.write_output("  Deploying to VPS using Kamal...")
+        kamal_cmd = plugin_config.kamal_cmd
+        plugin_utils.run_slow_command(f"{kamal_cmd} setup")
+        # plugin_utils.run_slow_command(f"{kamal_cmd} deploy")
 
-        # Should set self.deployed_url, which will be reported in the success message.
-        pass
+        if plugin_config.host:
+            self.deployed_url = f"https://{plugin_config.host}"
+        else:
+            self.deployed_url = f"http://{plugin_config.ip_address}"
 
     def _show_success_message(self):
         """After a successful run, show a message about what to do next.

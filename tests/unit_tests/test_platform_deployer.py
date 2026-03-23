@@ -254,3 +254,60 @@ def test_validate_cli_rvx_nonzero_returncode(mocker):
     deployer = PlatformDeployer()
     with pytest.raises(DSDCommandError):
         deployer._validate_cli()
+
+
+# --- Tests for _conclude_automate_all ---
+
+
+def test_conclude_automate_all_returns_when_disabled(monkeypatch, mocker):
+    """_conclude_automate_all returns immediately when automate_all is False."""
+    monkeypatch.setattr(dsd_config, "automate_all", False)
+
+    mock_commit = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.commit_changes")
+    mock_slow = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_slow_command")
+    mock_write = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.write_output")
+
+    deployer = PlatformDeployer()
+    deployer._conclude_automate_all()
+
+    mock_commit.assert_not_called()
+    mock_slow.assert_not_called()
+    mock_write.assert_not_called()
+
+
+def test_conclude_automate_all_runs_kamal_commands_with_host(monkeypatch, mocker):
+    """_conclude_automate_all commits, deploys, and opens app when automate_all is True."""
+    monkeypatch.setattr(dsd_config, "automate_all", True)
+    monkeypatch.setattr(plugin_config, "kamal_cmd", "kamal")
+    monkeypatch.setattr(plugin_config, "host", "blog.example.com")
+    monkeypatch.setattr(plugin_config, "ip_address", "192.168.1.100")
+
+    mock_commit = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.commit_changes")
+    mock_slow = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_slow_command")
+    mock_write = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.write_output")
+
+    deployer = PlatformDeployer()
+    deployer._conclude_automate_all()
+
+    mock_commit.assert_called_once()
+    mock_slow.assert_any_call("kamal setup")
+    assert mock_slow.call_count == 1
+    mock_write.assert_any_call("  Deploying to VPS using Kamal...")
+    assert deployer.deployed_url == "https://blog.example.com"
+
+
+def test_conclude_automate_all_uses_ip_when_host_missing(monkeypatch, mocker):
+    """_conclude_automate_all sets deployed_url from ip_address if host is not set."""
+    monkeypatch.setattr(dsd_config, "automate_all", True)
+    monkeypatch.setattr(plugin_config, "kamal_cmd", "rvx kamal")
+    monkeypatch.setattr(plugin_config, "host", None)
+    monkeypatch.setattr(plugin_config, "ip_address", "192.168.1.100")
+
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.commit_changes")
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_slow_command")
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.write_output")
+
+    deployer = PlatformDeployer()
+    deployer._conclude_automate_all()
+
+    assert deployer.deployed_url == "http://192.168.1.100"
