@@ -51,6 +51,7 @@ def test_check_ssh_connection_succeeds(mocker):
 
     mock_run.assert_called_once_with(
         ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
+         "-o", "StrictHostKeyChecking=accept-new",
          "root@192.168.1.100", "echo", "ok"],
         capture_output=True,
         text=True,
@@ -80,6 +81,24 @@ def test_check_ssh_connection_timeout(mocker):
     deployer = PlatformDeployer()
     with pytest.raises(DSDCommandError, match="timed out"):
         deployer._check_ssh_connection(ip)
+
+
+def test_check_ssh_connection_host_key_changed(mocker):
+    """_check_ssh_connection raises error with host-key-change SSH stderr."""
+    ip = "204.168.189.122"
+    stderr = "WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!"
+
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.subprocess.run")
+    mock_run.return_value = mocker.Mock(returncode=255, stderr=stderr)
+
+    deployer = PlatformDeployer()
+    with pytest.raises(DSDCommandError) as exc_info:
+        deployer._check_ssh_connection(ip)
+
+    error_msg = str(exc_info.value)
+    assert f"Could not connect to {ip} via SSH." in error_msg
+    assert f"Ensure you can run: ssh root@{ip}" in error_msg
+    assert stderr in error_msg
 
 
 # --- Tests for _modify_gitignore ---

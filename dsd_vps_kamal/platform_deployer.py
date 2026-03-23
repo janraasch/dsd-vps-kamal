@@ -104,6 +104,7 @@ class PlatformDeployer:
     def _check_ssh_connection(self, ip):
         """Check that the target VPS is reachable via SSH."""
         cmd = ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
+               "-o", "StrictHostKeyChecking=accept-new",
                f"root@{ip}", "echo", "ok"]
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
