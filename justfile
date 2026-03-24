@@ -14,7 +14,9 @@ test-integration:
 # Core picks up our unit tests automatically, so we don't need to run them here.
 test: test-integration
 
-# TODO: end-2-end tests
+# Run end-to-end tests against a live Hetzner server (requires hcloud CLI + active context)
+test-e2e:
+    cd ../django-simple-deploy && uv run pytest tests/e2e_tests/ -s --plugin dsd_vps_kamal --automate-all
 
 # Check linting (no fixes)
 lint:

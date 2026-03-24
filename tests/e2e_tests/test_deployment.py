@@ -1,4 +1,4 @@
-import re, time
+import time
 
 import pytest
 
@@ -33,50 +33,30 @@ def test_deployment(tmp_project, cli_options, request):
 
     python_cmd = it_utils.get_python_exe(tmp_project)
 
-    # Note: If not using automate_all, take steps here that the end user would take.
-    # Create a new project on the remote host, if not testing --automate-all.
-    # if not cli_options.automate_all:
-    #     app_name = platform_utils.create_project()
-    #     request.config.cache.set("app_name", app_name)
+    # Create the Hetzner server; cache the IP for teardown.
+    server_ip = platform_utils.create_project()
+    request.config.cache.set("app_name", server_ip)
 
-    # Run simple_deploy against the test project.
-    it_utils.run_simple_deploy(python_cmd, automate_all=cli_options.automate_all)
+    # Run simple_deploy against the test project, passing the server IP.
+    it_utils.run_simple_deploy(
+        python_cmd,
+        automate_all=cli_options.automate_all,
+        plugin_args_string=f"--ip-address {server_ip}",
+    )
 
     # If testing Pipenv, lock after adding new packages.
     if cli_options.pkg_manager == "pipenv":
         it_utils.make_sp_call(f"{python_cmd} -m pipenv lock")
 
-    # Note: This is an example of how you can stash information about the deployment, 
-    #   which can be used in the teardown phase. You do need to set project_url,
-    #   in order to run functionality tests against the deployed project.
-    # 
-    # Get the deployed project's URL, and ID so we can destroy it later.
-    #   This also commits configuration changes and pushes the project
-    #   when testing the configuration-only workflow.
-    # When testing automate_all, cache app_name for teardown work.
-    # if cli_options.automate_all:
-    #     project_url, app_name = platform_utils.get_project_url_name()
-    #     request.config.cache.set("app_name", app_name)
-    # else:
-    #     it_utils.commit_configuration_changes()
-    #     project_url = platform_utils.deploy_project(app_name)
-    
-    # Note: ***** Remove this line, or your test will always report as passed! *****
-    remote_functionality_passed = True
+    project_url = f"http://{server_ip}"
 
-    # Remote functionality test often fails if run too quickly after deployment.
+    # Pause to let Kamal finish starting the app.
     print("\nPausing 10s to let deployment finish...")
     time.sleep(10)
 
-    # Note: Uncomment this section once your deployment is successful, and 
-    #   project_url is set in the above section.
-    # 
-    # Test functionality of both deployed app, and local project.
-    #   We want to make sure the deployment works, but also make sure we haven't
-    #   affected functionality of the local project using the development server.
-    # remote_functionality_passed = it_utils.check_deployed_app_functionality(
-    #     python_cmd, project_url
-    # )
+    remote_functionality_passed = it_utils.check_deployed_app_functionality(
+        python_cmd, project_url
+    )
     local_functionality_passed = it_utils.check_local_app_functionality(python_cmd)
     log_check_passed = platform_utils.check_log(tmp_project)
 
