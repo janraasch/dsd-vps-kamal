@@ -15,9 +15,10 @@ from dsd_vps_kamal.plugin_config import plugin_config
 from dsd_vps_kamal import deploy_messages as platform_msgs
 
 
-def test_validate_platform_skipped_when_unit_testing(monkeypatch):
-    """_validate_platform is skipped when unit_testing is True."""
-    monkeypatch.setattr(dsd_config, "unit_testing", True)
+def test_validate_platform_skipped_when_not_automate_all(monkeypatch, mocker):
+    """_validate_platform skips SSH/CLI checks when automate_all is False."""
+    monkeypatch.setattr(dsd_config, "automate_all", False)
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.check_settings")
 
     deployer = PlatformDeployer()
     # Should not raise any exception, even without an IP configured.
@@ -273,6 +274,48 @@ def test_validate_cli_rvx_nonzero_returncode(mocker):
     deployer = PlatformDeployer()
     with pytest.raises(DSDCommandError):
         deployer._validate_cli()
+
+
+# --- Tests for _check_docker_daemon ---
+
+
+def test_check_docker_daemon_succeeds(mocker):
+    """_check_docker_daemon succeeds when Docker daemon is running."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    mock_run.return_value = mocker.Mock(returncode=0)
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
+
+    deployer = PlatformDeployer()
+    deployer._check_docker_daemon()
+
+    mock_run.assert_called_once_with("docker info")
+
+
+def test_check_docker_daemon_not_running(mocker):
+    """_check_docker_daemon raises error when Docker daemon is not running."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    mock_run.return_value = mocker.Mock(returncode=1)
+    mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
+
+    deployer = PlatformDeployer()
+    with pytest.raises(DSDCommandError):
+        deployer._check_docker_daemon()
+
+
+def test_check_docker_daemon_not_installed(mocker):
+    """_check_docker_daemon raises error when Docker is not installed."""
+    mock_run = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
+    )
+    mock_run.side_effect = FileNotFoundError
+
+    deployer = PlatformDeployer()
+    with pytest.raises(DSDCommandError):
+        deployer._check_docker_daemon()
 
 
 # --- Tests for _conclude_automate_all ---

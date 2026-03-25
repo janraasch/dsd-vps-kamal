@@ -30,6 +30,12 @@ In order to deploy to your VPS using Kamal, you need to install the Kamal CLI.
 After installing the CLI, you can run the deploy command again.
 """
 
+docker_not_running = """
+The Docker daemon does not appear to be running. Kamal needs Docker to
+build and push your project's container image.
+  Please start Docker and then run the deploy command again.
+"""
+
 # TODO: Do we need this? Or maybe we can check here that we can access the VPS via SSH?
 cli_logged_out = """
 You are currently logged out of the VPS Kamal CLI. Please log in,

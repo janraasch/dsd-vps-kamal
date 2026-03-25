@@ -63,16 +63,28 @@ class PlatformDeployer:
         Raises:
             DSDCommandError: If we find any reason deployment won't work.
         """
-        # TODO: We might actually change this to if not dsd_config.automate_all.
-        if dsd_config.unit_testing:
-            return
-
         self._check_vps_kamal_settings()
+
+        if not dsd_config.automate_all:
+            return
 
         ip = plugin_config.ip_address
         self._check_ssh_connection(ip)
 
         self._validate_cli()
+        self._check_docker_daemon()
+
+    def _check_docker_daemon(self):
+        """Check that the Docker daemon is running."""
+        try:
+            output_obj = plugin_utils.run_quick_command("docker info")
+        except FileNotFoundError:
+            raise DSDCommandError(platform_msgs.docker_not_running)
+
+        plugin_utils.log_info(output_obj)
+
+        if output_obj.returncode:
+            raise DSDCommandError(platform_msgs.docker_not_running)
 
     def _validate_cli(self):
         """Validate that Kamal is installed.
