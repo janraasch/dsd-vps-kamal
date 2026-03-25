@@ -19,8 +19,9 @@ test-e2e:
     cd ../django-simple-deploy && uv run pytest tests/e2e_tests/ -s --plugin dsd_vps_kamal --automate-all
 
 # Run end-to-end tests with SQLite against a live Hetzner server
+# (--sqlite is passed to manage.py deploy, not pytest; see core e2e --plugin-args-string)
 test-e2e-sqlite:
-    cd ../django-simple-deploy && uv run pytest tests/e2e_tests/ -s --plugin dsd_vps_kamal --automate-all --sqlite
+    cd ../django-simple-deploy && uv run pytest tests/e2e_tests/ -s --plugin dsd_vps_kamal --automate-all --plugin-args-string='--sqlite'
 
 # Check linting (no fixes)
 lint:
