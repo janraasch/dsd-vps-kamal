@@ -25,14 +25,12 @@ if os.environ.get("ON_VPS"):
 
     ALLOWED_HOSTS = ["{{ ip_address }}"{% if host %}, "{{ host }}"{% endif %}]
 
-{% if use_sqlite %}    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": "/app/db/db.sqlite3",
-            "OPTIONS": {
-                "timeout": 20,
-            },
-        }
+{% if use_sqlite %}    from pathlib import Path
+
+    from dj_lite import sqlite_config
+
+    DATABASES = {
+        "default": sqlite_config(Path("/app/db"), timeout=20),
     }
 {% else %}    db_url = os.environ.get("DATABASE_URL")
     DATABASES["default"] = dj_database_url.parse(db_url)

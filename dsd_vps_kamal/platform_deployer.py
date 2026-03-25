@@ -238,7 +238,9 @@ class PlatformDeployer:
     def _add_requirements(self):
         """Add requirements for deploying to VPS via Kamal."""
         requirements = ["gunicorn", "whitenoise"]
-        if not plugin_config.use_sqlite:
+        if plugin_config.use_sqlite:
+            requirements.append("dj-lite")
+        else:
             requirements.extend(["psycopg2-binary", "dj-database-url"])
         plugin_utils.add_packages(requirements)
 

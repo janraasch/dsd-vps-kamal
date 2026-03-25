@@ -210,14 +210,14 @@ def test_add_kamal_secrets_sqlite_omits_postgres(tmp_path, monkeypatch):
 
 
 def test_add_requirements_sqlite_skips_postgres_packages(monkeypatch, mocker):
-    """_add_requirements excludes psycopg2-binary and dj-database-url when use_sqlite."""
+    """_add_requirements adds dj-lite and excludes Postgres packages when use_sqlite."""
     monkeypatch.setattr(plugin_config, "use_sqlite", True)
     mock_add = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.add_packages")
 
     deployer = PlatformDeployer()
     deployer._add_requirements()
 
-    mock_add.assert_called_once_with(["gunicorn", "whitenoise"])
+    mock_add.assert_called_once_with(["gunicorn", "whitenoise", "dj-lite"])
 
 
 def test_add_requirements_includes_postgres_when_not_sqlite(monkeypatch, mocker):

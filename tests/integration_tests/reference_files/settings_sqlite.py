@@ -157,14 +157,12 @@ if os.environ.get("ON_VPS"):
 
     ALLOWED_HOSTS = ["__SERVER_IP__"]
 
+    from pathlib import Path
+
+    from dj_lite import sqlite_config
+
     DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": "/app/db/db.sqlite3",
-            "OPTIONS": {
-                "timeout": 20,
-            },
-        }
+        "default": sqlite_config(Path("/app/db"), timeout=20),
     }
 
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

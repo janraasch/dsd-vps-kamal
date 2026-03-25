@@ -10,6 +10,7 @@ requests = "*"
 django-simple-deploy = "=={current-version}"
 gunicorn = "*"
 whitenoise = "*"
+dj-lite = "*"
 
 [dev-packages]
 
