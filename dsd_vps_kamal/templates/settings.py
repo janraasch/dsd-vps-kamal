@@ -4,8 +4,8 @@
 import os
 
 if os.environ.get("ON_VPS"):
-    import dj_database_url
-    from django.http import HttpResponse
+{% if not use_sqlite %}    import dj_database_url
+{% endif %}    from django.http import HttpResponse
 
     class HealthCheckMiddleware:
         def __init__(self, get_response):
@@ -25,9 +25,18 @@ if os.environ.get("ON_VPS"):
 
     ALLOWED_HOSTS = ["{{ ip_address }}"{% if host %}, "{{ host }}"{% endif %}]
 
-    db_url = os.environ.get("DATABASE_URL")
+{% if use_sqlite %}    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": "/app/db/db.sqlite3",
+            "OPTIONS": {
+                "timeout": 20,
+            },
+        }
+    }
+{% else %}    db_url = os.environ.get("DATABASE_URL")
     DATABASES["default"] = dj_database_url.parse(db_url)
-
+{% endif %}
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     STATIC_URL = "/static/"
 

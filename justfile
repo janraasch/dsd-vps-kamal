@@ -18,6 +18,10 @@ test: test-integration
 test-e2e:
     cd ../django-simple-deploy && uv run pytest tests/e2e_tests/ -s --plugin dsd_vps_kamal --automate-all
 
+# Run end-to-end tests with SQLite against a live Hetzner server
+test-e2e-sqlite:
+    cd ../django-simple-deploy && uv run pytest tests/e2e_tests/ -s --plugin dsd_vps_kamal --automate-all --sqlite
+
 # Check linting (no fixes)
 lint:
     uv run ruff format --check .

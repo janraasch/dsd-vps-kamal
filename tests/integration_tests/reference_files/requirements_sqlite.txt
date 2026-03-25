@@ -11,5 +11,3 @@ urllib3==2.2.3
 django-simple-deploy=={current-version}
 gunicorn
 whitenoise
-psycopg2-binary
-dj-database-url

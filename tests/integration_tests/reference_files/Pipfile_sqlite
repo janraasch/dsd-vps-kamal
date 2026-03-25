@@ -10,8 +10,6 @@ requests = "*"
 django-simple-deploy = "=={current-version}"
 gunicorn = "*"
 whitenoise = "*"
-psycopg2-binary = "*"
-dj-database-url = "*"
 
 [dev-packages]
 

@@ -157,6 +157,7 @@ def test_add_kamal_secrets(tmp_path, monkeypatch):
     monkeypatch.setattr(dsd_config, "local_project_name", "blog")
     monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
     monkeypatch.setattr(dsd_config, "unit_testing", True)
+    monkeypatch.setattr(plugin_config, "use_sqlite", False)
 
     deployer = PlatformDeployer()
     deployer._add_kamal_secrets()
@@ -189,6 +190,105 @@ def test_add_kamal_secrets(tmp_path, monkeypatch):
     for line in contents.splitlines():
         if line.startswith("POSTGRES_PASSWORD="):
             assert len(line.split("=", 1)[1]) >= 20
+
+
+def test_add_kamal_secrets_sqlite_omits_postgres(tmp_path, monkeypatch):
+    """_add_kamal_secrets omits DATABASE_URL and POSTGRES_PASSWORD when use_sqlite."""
+    monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+    monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
+    monkeypatch.setattr(dsd_config, "unit_testing", True)
+    monkeypatch.setattr(plugin_config, "use_sqlite", True)
+
+    deployer = PlatformDeployer()
+    deployer._add_kamal_secrets()
+
+    contents = (tmp_path / ".kamal" / "secrets").read_text()
+    assert "SECRET_KEY=" in contents
+    assert "DATABASE_URL=" not in contents
+    assert "POSTGRES_PASSWORD=" not in contents
+
+
+def test_add_requirements_sqlite_skips_postgres_packages(monkeypatch, mocker):
+    """_add_requirements excludes psycopg2-binary and dj-database-url when use_sqlite."""
+    monkeypatch.setattr(plugin_config, "use_sqlite", True)
+    mock_add = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.add_packages")
+
+    deployer = PlatformDeployer()
+    deployer._add_requirements()
+
+    mock_add.assert_called_once_with(["gunicorn", "whitenoise"])
+
+
+def test_add_requirements_includes_postgres_when_not_sqlite(monkeypatch, mocker):
+    """_add_requirements adds Postgres stack when not using SQLite."""
+    monkeypatch.setattr(plugin_config, "use_sqlite", False)
+    mock_add = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.add_packages")
+
+    deployer = PlatformDeployer()
+    deployer._add_requirements()
+
+    mock_add.assert_called_once_with(
+        ["gunicorn", "whitenoise", "psycopg2-binary", "dj-database-url"]
+    )
+
+
+def test_add_deploy_yml_passes_use_sqlite_to_template(tmp_path, monkeypatch, mocker):
+    """_add_deploy_yml template context includes use_sqlite."""
+    monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+    monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
+    monkeypatch.setattr(plugin_config, "ip_address", "10.0.0.1")
+    monkeypatch.setattr(plugin_config, "host", "")
+    monkeypatch.setattr(plugin_config, "use_sqlite", True)
+    mock_tpl = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.get_template_string",
+        return_value="yml",
+    )
+
+    deployer = PlatformDeployer()
+    deployer._add_deploy_yml()
+
+    context = mock_tpl.call_args[0][1]
+    assert context["use_sqlite"] is True
+
+
+def test_add_kamal_secrets_passes_use_sqlite_to_template(tmp_path, monkeypatch, mocker):
+    """_add_kamal_secrets template context includes use_sqlite and omits DB keys."""
+    monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+    monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
+    monkeypatch.setattr(dsd_config, "unit_testing", True)
+    monkeypatch.setattr(plugin_config, "use_sqlite", True)
+    mock_tpl = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.get_template_string",
+        return_value="SECRET_KEY=x\n",
+    )
+
+    deployer = PlatformDeployer()
+    deployer._add_kamal_secrets()
+
+    context = mock_tpl.call_args[0][1]
+    assert context["use_sqlite"] is True
+    assert "database_url" not in context
+    assert "postgres_password" not in context
+
+
+def test_modify_settings_passes_use_sqlite(monkeypatch, mocker):
+    """_modify_settings passes use_sqlite into modify_settings_file context."""
+    monkeypatch.setattr(plugin_config, "ip_address", "192.168.0.1")
+    monkeypatch.setattr(plugin_config, "host", "")
+    monkeypatch.setattr(plugin_config, "use_sqlite", True)
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+    mock_mod = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.modify_settings_file"
+    )
+
+    deployer = PlatformDeployer()
+    deployer._modify_settings()
+
+    context = mock_mod.call_args[0][1]
+    assert context["use_sqlite"] is True
 
 
 # --- Tests for _validate_cli ---

@@ -150,9 +150,12 @@ class PlatformDeployer:
             "app_name": dsd_config.local_project_name,
             "ip_address": plugin_config.ip_address or "__SERVER_IP__",
             "host": plugin_config.host or "",
+            "use_sqlite": plugin_config.use_sqlite,
         }
         contents = plugin_utils.get_template_string(template_path, context)
         contents = plugin_utils.remove_doubled_blank_lines(contents)
+        # Final {% endif %} can leave a trailing blank line; normalize EOF for stable tests.
+        contents = contents.rstrip("\n") + "\n"
 
         path = dsd_config.project_root / "config" / "deploy.yml"
         path.parent.mkdir(exist_ok=True)
@@ -177,13 +180,6 @@ class PlatformDeployer:
     def _add_kamal_secrets(self):
         """Create .kamal/secrets with generated credentials."""
         secret_key = get_random_secret_key()
-        postgres_password = get_random_string(length=24)
-        app_name = dsd_config.local_project_name
-
-        database_url = (
-            f"postgres://{app_name}:{postgres_password}"
-            f"@{app_name}-postgres:5432/{app_name}"
-        )
 
         # mark_safe is required here because Django's template engine auto-escapes
         # by default. Generated secrets can contain <, >, &, etc. which would be
@@ -191,9 +187,18 @@ class PlatformDeployer:
         template_path = self.templates_path / "kamal_secrets"
         context = {
             "secret_key": mark_safe(secret_key),
-            "database_url": mark_safe(database_url),
-            "postgres_password": mark_safe(postgres_password),
+            "use_sqlite": plugin_config.use_sqlite,
         }
+
+        if not plugin_config.use_sqlite:
+            postgres_password = get_random_string(length=24)
+            app_name = dsd_config.local_project_name
+            database_url = (
+                f"postgres://{app_name}:{postgres_password}"
+                f"@{app_name}-postgres:5432/{app_name}"
+            )
+            context["database_url"] = mark_safe(database_url)
+            context["postgres_password"] = mark_safe(postgres_password)
         contents = plugin_utils.get_template_string(template_path, context)
 
         path = dsd_config.project_root / ".kamal" / "secrets"
@@ -232,7 +237,9 @@ class PlatformDeployer:
 
     def _add_requirements(self):
         """Add requirements for deploying to VPS via Kamal."""
-        requirements = ["gunicorn", "psycopg2-binary", "dj-database-url", "whitenoise"]
+        requirements = ["gunicorn", "whitenoise"]
+        if not plugin_config.use_sqlite:
+            requirements.extend(["psycopg2-binary", "dj-database-url"])
         plugin_utils.add_packages(requirements)
 
     def _modify_settings(self):
@@ -242,6 +249,7 @@ class PlatformDeployer:
             "ip_address": plugin_config.ip_address or "__SERVER_IP__",
             "host": plugin_config.host or "",
             "settings_module_path": f"{dsd_config.local_project_name}.settings",
+            "use_sqlite": plugin_config.use_sqlite,
         }
         plugin_utils.modify_settings_file(template_path, context)
 

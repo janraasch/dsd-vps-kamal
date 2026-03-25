@@ -34,6 +34,13 @@ class PluginCLI:
             default=None,
         )
 
+        plugin_group.add_argument(
+            "--sqlite",
+            action="store_true",
+            help="Use SQLite instead of PostgreSQL for the database.",
+            default=False,
+        )
+
 
 def validate_cli(options):
     """Validate options that were passed to CLI."""
@@ -43,6 +50,8 @@ def validate_cli(options):
     host = options["host"]
     if host:
         plugin_config.host = host
+
+    plugin_config.use_sqlite = options["sqlite"]
 
 
 # --- Helper functions ---
