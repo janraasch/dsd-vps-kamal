@@ -33,7 +33,7 @@ def test_check_vps_kamal_settings_calls_check_settings(mocker):
     deployer._check_vps_kamal_settings()
 
     mock_check.assert_called_once_with(
-        "# VPS Kamal settings.",
+        "VPS-Kamal",
         "# VPS Kamal settings.",
         platform_msgs.vps_kamal_settings_found,
         platform_msgs.cant_overwrite_settings,

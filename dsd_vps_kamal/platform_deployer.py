@@ -136,7 +136,7 @@ class PlatformDeployer:
         """Check to see if a VPS Kamal settings block already exists."""
         start_line = "# VPS Kamal settings."
         plugin_utils.check_settings(
-            "# VPS Kamal settings.",
+            "VPS-Kamal",
             start_line,
             platform_msgs.vps_kamal_settings_found,
             platform_msgs.cant_overwrite_settings,
