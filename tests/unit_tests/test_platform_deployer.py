@@ -328,6 +328,7 @@ def test_conclude_automate_all_returns_when_disabled(monkeypatch, mocker):
     mock_commit = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.commit_changes")
     mock_slow = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_slow_command")
     mock_write = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.write_output")
+    mock_browser = mocker.patch("dsd_vps_kamal.platform_deployer.webbrowser.open")
 
     deployer = PlatformDeployer()
     deployer._conclude_automate_all()
@@ -335,6 +336,7 @@ def test_conclude_automate_all_returns_when_disabled(monkeypatch, mocker):
     mock_commit.assert_not_called()
     mock_slow.assert_not_called()
     mock_write.assert_not_called()
+    mock_browser.assert_not_called()
 
 
 def test_conclude_automate_all_runs_kamal_commands_with_host(monkeypatch, mocker):
@@ -347,6 +349,7 @@ def test_conclude_automate_all_runs_kamal_commands_with_host(monkeypatch, mocker
     mock_commit = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.commit_changes")
     mock_slow = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_slow_command")
     mock_write = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.write_output")
+    mock_browser = mocker.patch("dsd_vps_kamal.platform_deployer.webbrowser.open")
 
     deployer = PlatformDeployer()
     deployer._conclude_automate_all()
@@ -356,6 +359,7 @@ def test_conclude_automate_all_runs_kamal_commands_with_host(monkeypatch, mocker
     assert mock_slow.call_count == 1
     mock_write.assert_any_call("  Deploying to VPS using Kamal...")
     assert deployer.deployed_url == "https://blog.example.com"
+    mock_browser.assert_called_once_with("https://blog.example.com")
 
 
 def test_conclude_automate_all_uses_ip_when_host_missing(monkeypatch, mocker):
@@ -368,8 +372,10 @@ def test_conclude_automate_all_uses_ip_when_host_missing(monkeypatch, mocker):
     mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.commit_changes")
     mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_slow_command")
     mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.write_output")
+    mock_browser = mocker.patch("dsd_vps_kamal.platform_deployer.webbrowser.open")
 
     deployer = PlatformDeployer()
     deployer._conclude_automate_all()
 
     assert deployer.deployed_url == "http://192.168.1.100"
+    mock_browser.assert_called_once_with("http://192.168.1.100")

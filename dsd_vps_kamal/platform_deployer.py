@@ -3,6 +3,7 @@
 
 import subprocess
 import sys, os, re, json
+import webbrowser
 from pathlib import Path
 
 from django.core.management.utils import get_random_secret_key
@@ -272,6 +273,8 @@ class PlatformDeployer:
             self.deployed_url = f"https://{plugin_config.host}"
         else:
             self.deployed_url = f"http://{plugin_config.ip_address}"
+
+        webbrowser.open(self.deployed_url)
 
     def _show_success_message(self):
         """After a successful run, show a message about what to do next.
