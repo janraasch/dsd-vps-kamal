@@ -3,14 +3,13 @@
 from pathlib import Path
 
 import pytest
-
-from tests.integration_tests.utils import it_helper_functions as hf
 from tests.integration_tests.conftest import (
-    tmp_project,
-    reset_test_project,
-    pkg_manager,
     dsd_version,
+    pkg_manager,
+    reset_test_project,
+    tmp_project,
 )
+from tests.integration_tests.utils import it_helper_functions as hf
 from tests.integration_tests.utils import manage_sample_project as msp
 
 pytestmark = pytest.mark.skip_auto_dsd_call

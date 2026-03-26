@@ -7,8 +7,9 @@ Notes:
 import django_simple_deploy
 
 from dsd_vps_kamal.platform_deployer import PlatformDeployer
-from .plugin_config import plugin_config
+
 from .cli import PluginCLI, validate_cli
+from .plugin_config import plugin_config
 
 
 @django_simple_deploy.hookimpl

@@ -6,7 +6,6 @@ from textwrap import dedent
 
 from django.conf import settings
 
-
 confirm_automate_all = """
 The --automate-all flag means django-simple-deploy will:
 - ...

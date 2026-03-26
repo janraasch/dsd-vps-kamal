@@ -10,9 +10,9 @@ import sys
 import pytest
 from django_simple_deploy.management.commands.utils.command_errors import DSDCommandError
 
+from dsd_vps_kamal import deploy_messages as platform_msgs
 from dsd_vps_kamal.platform_deployer import PlatformDeployer, dsd_config
 from dsd_vps_kamal.plugin_config import plugin_config
-from dsd_vps_kamal import deploy_messages as platform_msgs
 
 
 def test_validate_platform_skipped_when_not_automate_all(monkeypatch, mocker):

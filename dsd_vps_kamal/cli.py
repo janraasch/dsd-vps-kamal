@@ -2,10 +2,10 @@
 
 import ipaddress
 
-from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
 from django_simple_deploy.management.commands.utils.command_errors import (
     DSDCommandError,
 )
+from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
 
 from .plugin_config import plugin_config
 

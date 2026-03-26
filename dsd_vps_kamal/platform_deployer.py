@@ -1,22 +1,23 @@
 """Manages all Kamal-powered VPS-specific aspects of the deployment process."""
 
+import json
+import os
+import re
 import subprocess
-import sys, os, re, json
+import sys
 import webbrowser
 from pathlib import Path
 
+import requests
 from django.core.management.utils import get_random_secret_key
 from django.utils.crypto import get_random_string
 from django.utils.safestring import mark_safe
-
-import requests
+from django_simple_deploy.management.commands.utils import plugin_utils
+from django_simple_deploy.management.commands.utils.command_errors import DSDCommandError
+from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
 
 from . import deploy_messages as platform_msgs
 from .plugin_config import plugin_config
-
-from django_simple_deploy.management.commands.utils import plugin_utils
-from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
-from django_simple_deploy.management.commands.utils.command_errors import DSDCommandError
 
 
 class PlatformDeployer:

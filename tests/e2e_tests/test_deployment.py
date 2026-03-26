@@ -1,12 +1,11 @@
 import time
 
 import pytest
+from tests.e2e_tests.conftest import cli_options, tmp_project
 
 from tests.e2e_tests.utils import it_helper_functions as it_utils
+
 from . import utils as platform_utils
-
-from tests.e2e_tests.conftest import tmp_project, cli_options
-
 
 # --- Test functions ---
 

@@ -7,7 +7,6 @@ This test checks that plugin-specific options are included in the help output.
 from pathlib import Path
 
 import pytest
-
 from tests.integration_tests.conftest import tmp_project
 from tests.integration_tests.utils import manage_sample_project as msp
 

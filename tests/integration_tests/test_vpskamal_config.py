@@ -1,20 +1,18 @@
 """Integration tests for django-simple-deploy, targeting VPS Kamal."""
 
+import subprocess
 import sys
 from pathlib import Path
-import subprocess
 
 import pytest
-
-from tests.integration_tests.utils import it_helper_functions as hf
 from tests.integration_tests.conftest import (
-    tmp_project,
-    run_dsd,
-    reset_test_project,
-    pkg_manager,
     dsd_version,
+    pkg_manager,
+    reset_test_project,
+    run_dsd,
+    tmp_project,
 )
-
+from tests.integration_tests.utils import it_helper_functions as hf
 
 # --- Fixtures ---
 
