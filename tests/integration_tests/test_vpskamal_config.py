@@ -137,7 +137,6 @@ def test_log_dir(tmp_project):
 
     # There should be exactly two log files.
     log_files = sorted(log_path.glob("*"))
-    log_filenames = [lf.name for lf in log_files]
     # Check for exactly the log files we expect to find.
     # DEV: Currently just testing that a log file exists. Add a regex text for a file
     # like "simple_deploy_2022-07-09174245.log".
