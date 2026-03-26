@@ -161,9 +161,7 @@ if os.environ.get("ON_VPS"):
 
     from dj_lite import sqlite_config
 
-    DATABASES = {
-        "default": sqlite_config(Path("/app/db"), timeout=20),
-    }
+    DATABASES["default"] = sqlite_config(Path("/app/db"))
 
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
     STATIC_URL = "/static/"

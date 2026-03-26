@@ -29,9 +29,7 @@ if os.environ.get("ON_VPS"):
 
     from dj_lite import sqlite_config
 
-    DATABASES = {
-        "default": sqlite_config(Path("/app/db"), timeout=20),
-    }
+    DATABASES["default"] = sqlite_config(Path("/app/db"))
 {% else %}    db_url = os.environ.get("DATABASE_URL")
     DATABASES["default"] = dj_database_url.parse(db_url)
 {% endif %}
