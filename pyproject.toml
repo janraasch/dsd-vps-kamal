@@ -109,6 +109,10 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["A", "B", "C", "D", "E", "F", "I"]
 # Pytest fixture imports from core's conftest trigger F811 on test function params.
+# TODO: Consider using @pytest.mark.usefixtures instead of explicit imports to avoid F811.
+#   Currently not possible because fixtures live in core's conftest (django-simple-deploy)
+#   and pytest_plugins can't be used in non-top-level conftest files.
+#   See: https://docs.pytest.org/en/stable/how-to/fixtures.html#use-fixtures-in-classes-and-modules-with-usefixtures
 per-file-ignores = { "tests/**/test_*.py" = ["F811"] }
 select = [
     # pycodestyle
