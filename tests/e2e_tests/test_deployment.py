@@ -54,9 +54,7 @@ def test_deployment(tmp_project, cli_options, request):
     print("\nPausing 10s to let deployment finish...")
     time.sleep(10)
 
-    remote_functionality_passed = it_utils.check_deployed_app_functionality(
-        python_cmd, project_url
-    )
+    remote_functionality_passed = it_utils.check_deployed_app_functionality(python_cmd, project_url)
     local_functionality_passed = it_utils.check_local_app_functionality(python_cmd)
     log_check_passed = platform_utils.check_log(tmp_project)
 

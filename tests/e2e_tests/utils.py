@@ -39,9 +39,16 @@ def _wait_for_ssh(ip, timeout=120, interval=5):
 
     print(f"  Waiting for SSH on {ip}...")
     cmd = [
-        "ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
-        "-o", "StrictHostKeyChecking=accept-new",
-        f"root@{ip}", "echo", "ok",
+        "ssh",
+        "-o",
+        "ConnectTimeout=5",
+        "-o",
+        "BatchMode=yes",
+        "-o",
+        "StrictHostKeyChecking=accept-new",
+        f"root@{ip}",
+        "echo",
+        "ok",
     ]
     deadline = time.time() + timeout
     while time.time() < deadline:

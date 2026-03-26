@@ -31,6 +31,7 @@ class PluginConfig:
         self.use_sqlite = False
         self.kamal_cmd = None
 
+
 # Create plugin_config once right here. This approach keeps from having to pass the config
 # instance between core, plugins, and these utility functions.
 plugin_config = PluginConfig()

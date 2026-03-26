@@ -20,7 +20,7 @@ pytestmark = pytest.mark.skip_auto_dsd_call
 #     """Test that dsd-vps-kamal CLI args are included in help output.
 
 #     Note: When updating this, run `manage.py deploy --help` in a terminal set
-#     to 80 characters wide. That splits help text at the same places as the 
+#     to 80 characters wide. That splits help text at the same places as the
 #     test environment.
 #     On macOS, you can simply run:
 #         $ COLUMNS=80 python manage.py deploy --help

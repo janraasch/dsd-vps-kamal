@@ -75,9 +75,7 @@ def test_pipfile(tmp_project, pkg_manager, tmp_path, dsd_version):
         assert not Path("Pipfile").exists()
     elif pkg_manager == "pipenv":
         context = {"current-version": dsd_version}
-        hf.check_reference_file(
-            tmp_project, "Pipfile", "dsd-vps-kamal", context=context, tmp_path=tmp_path
-        )
+        hf.check_reference_file(tmp_project, "Pipfile", "dsd-vps-kamal", context=context, tmp_path=tmp_path)
 
 
 def test_gitignore(tmp_project):
@@ -171,13 +169,7 @@ def test_log_dir(tmp_project):
     assert "INFO: ?? dsd_logs/" in log_file_text
 
     # Spot check for success messages.
-    assert (
-        "INFO: --- Your project is now configured for deployment on VPS Kamal ---"
-        in log_file_text
-    )
+    assert "INFO: --- Your project is now configured for deployment on VPS Kamal ---" in log_file_text
     assert "INFO: To deploy your project, you will need to:" in log_file_text
 
-    assert (
-        "INFO: - You can find a full record of this configuration in the dsd_logs directory."
-        in log_file_text
-    )
+    assert "INFO: - You can find a full record of this configuration in the dsd_logs directory." in log_file_text

@@ -51,9 +51,18 @@ def test_check_ssh_connection_succeeds(mocker):
     deployer._check_ssh_connection(ip)
 
     mock_run.assert_called_once_with(
-        ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
-         "-o", "StrictHostKeyChecking=accept-new",
-         "root@192.168.1.100", "echo", "ok"],
+        [
+            "ssh",
+            "-o",
+            "ConnectTimeout=5",
+            "-o",
+            "BatchMode=yes",
+            "-o",
+            "StrictHostKeyChecking=accept-new",
+            "root@192.168.1.100",
+            "echo",
+            "ok",
+        ],
         capture_output=True,
         text=True,
         timeout=10,
@@ -228,9 +237,7 @@ def test_add_requirements_includes_postgres_when_not_sqlite(monkeypatch, mocker)
     deployer = PlatformDeployer()
     deployer._add_requirements()
 
-    mock_add.assert_called_once_with(
-        ["gunicorn", "whitenoise", "psycopg2-binary", "dj-database-url"]
-    )
+    mock_add.assert_called_once_with(["gunicorn", "whitenoise", "psycopg2-binary", "dj-database-url"])
 
 
 def test_add_deploy_yml_passes_use_sqlite_to_template(tmp_path, monkeypatch, mocker):
@@ -280,9 +287,7 @@ def test_modify_settings_passes_use_sqlite(monkeypatch, mocker):
     monkeypatch.setattr(plugin_config, "host", "")
     monkeypatch.setattr(plugin_config, "use_sqlite", True)
     monkeypatch.setattr(dsd_config, "local_project_name", "blog")
-    mock_mod = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.modify_settings_file"
-    )
+    mock_mod = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.modify_settings_file")
 
     deployer = PlatformDeployer()
     deployer._modify_settings()
@@ -296,9 +301,7 @@ def test_modify_settings_passes_use_sqlite(monkeypatch, mocker):
 
 def test_validate_cli_finds_kamal_directly(mocker):
     """_validate_cli succeeds when `kamal version` works directly."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     mock_run.return_value = mocker.Mock(returncode=0)
     mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
 
@@ -311,9 +314,7 @@ def test_validate_cli_finds_kamal_directly(mocker):
 
 def test_validate_cli_finds_kamal_via_rvx(mocker):
     """_validate_cli falls back to `rvx kamal version` when `kamal` is not found."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     # First call (`kamal version`) raises FileNotFoundError;
     # second call (`rvx kamal version`) succeeds.
     mock_run.side_effect = [FileNotFoundError, mocker.Mock(returncode=0)]
@@ -330,9 +331,7 @@ def test_validate_cli_finds_kamal_via_rvx(mocker):
 
 def test_validate_cli_finds_kamal_via_rvx_returncode(mocker):
     """_validate_cli falls back to rvx when `kamal version` returns non-zero."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     # First call returns non-zero; second succeeds.
     mock_run.side_effect = [
         mocker.Mock(returncode=1),
@@ -349,9 +348,7 @@ def test_validate_cli_finds_kamal_via_rvx_returncode(mocker):
 
 def test_validate_cli_neither_found(mocker):
     """_validate_cli raises DSDCommandError when neither kamal nor rvx is found."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     mock_run.side_effect = FileNotFoundError
     mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
 
@@ -362,9 +359,7 @@ def test_validate_cli_neither_found(mocker):
 
 def test_validate_cli_rvx_nonzero_returncode(mocker):
     """_validate_cli raises DSDCommandError when rvx kamal also fails."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     mock_run.side_effect = [
         FileNotFoundError,
         mocker.Mock(returncode=1),
@@ -381,9 +376,7 @@ def test_validate_cli_rvx_nonzero_returncode(mocker):
 
 def test_check_docker_daemon_succeeds(mocker):
     """_check_docker_daemon succeeds when Docker daemon is running."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     mock_run.return_value = mocker.Mock(returncode=0)
     mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
 
@@ -395,9 +388,7 @@ def test_check_docker_daemon_succeeds(mocker):
 
 def test_check_docker_daemon_not_running(mocker):
     """_check_docker_daemon raises error when Docker daemon is not running."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     mock_run.return_value = mocker.Mock(returncode=1)
     mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.log_info")
 
@@ -408,9 +399,7 @@ def test_check_docker_daemon_not_running(mocker):
 
 def test_check_docker_daemon_not_installed(mocker):
     """_check_docker_daemon raises error when Docker is not installed."""
-    mock_run = mocker.patch(
-        "dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command"
-    )
+    mock_run = mocker.patch("dsd_vps_kamal.platform_deployer.plugin_utils.run_quick_command")
     mock_run.side_effect = FileNotFoundError
 
     deployer = PlatformDeployer()

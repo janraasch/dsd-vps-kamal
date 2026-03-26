@@ -1,5 +1,4 @@
-"""Manages all Kamal-powered VPS-specific aspects of the deployment process.
-"""
+"""Manages all Kamal-powered VPS-specific aspects of the deployment process."""
 
 import subprocess
 import sys, os, re, json
@@ -56,7 +55,7 @@ class PlatformDeployer:
     def _validate_platform(self):
         """Make sure the local environment and project supports deployment to a VPS powered by Kamal.
 
-        Make sure Kamal is installed. 
+        Make sure Kamal is installed.
         Make sure the VPS is reachable via SSH.
 
         Returns:
@@ -116,15 +115,23 @@ class PlatformDeployer:
 
     def _check_ssh_connection(self, ip):
         """Check that the target VPS is reachable via SSH."""
-        cmd = ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes",
-               "-o", "StrictHostKeyChecking=accept-new",
-               f"root@{ip}", "echo", "ok"]
+        cmd = [
+            "ssh",
+            "-o",
+            "ConnectTimeout=5",
+            "-o",
+            "BatchMode=yes",
+            "-o",
+            "StrictHostKeyChecking=accept-new",
+            f"root@{ip}",
+            "echo",
+            "ok",
+        ]
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
         except subprocess.TimeoutExpired:
             raise DSDCommandError(
-                f"SSH connection to {ip} timed out."
-                f" Ensure the server is reachable and SSH key auth is configured."
+                f"SSH connection to {ip} timed out. Ensure the server is reachable and SSH key auth is configured."
             )
 
         if result.returncode != 0:
@@ -193,10 +200,7 @@ class PlatformDeployer:
         if not plugin_config.use_sqlite:
             postgres_password = get_random_string(length=24)
             app_name = dsd_config.local_project_name
-            database_url = (
-                f"postgres://{app_name}:{postgres_password}"
-                f"@{app_name}-postgres:5432/{app_name}"
-            )
+            database_url = f"postgres://{app_name}:{postgres_password}@{app_name}-postgres:5432/{app_name}"
             context["database_url"] = mark_safe(database_url)
             context["postgres_password"] = mark_safe(postgres_password)
         contents = plugin_utils.get_template_string(template_path, context)
@@ -258,7 +262,6 @@ class PlatformDeployer:
     def _prep_automate_all(self):
         """Take any further actions needed if using automate_all."""
         pass
-
 
     def _conclude_automate_all(self):
         """Finish automating the push to VPS Kamal.
