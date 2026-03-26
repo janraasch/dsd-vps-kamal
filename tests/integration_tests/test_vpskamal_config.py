@@ -1,11 +1,8 @@
 """Integration tests for django-simple-deploy, targeting VPS Kamal."""
 
-import subprocess
-import sys
 from pathlib import Path
 
-import pytest
-from tests.integration_tests.conftest import (
+from tests.integration_tests.conftest import (  # noqa: F401
     dsd_version,
     pkg_manager,
     reset_test_project,

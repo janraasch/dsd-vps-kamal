@@ -1,7 +1,7 @@
 """Test the --ip-address CLI arg."""
 
 import pytest
-from tests.integration_tests.conftest import tmp_project
+from tests.integration_tests.conftest import tmp_project  # noqa: F401
 from tests.integration_tests.utils import manage_sample_project as msp
 
 # Skip the default module-level `manage.py deploy call`, so we can call

@@ -4,11 +4,8 @@ The core django-simple-deploy library tests its own help output.
 This test checks that plugin-specific options are included in the help output.
 """
 
-from pathlib import Path
-
 import pytest
-from tests.integration_tests.conftest import tmp_project
-from tests.integration_tests.utils import manage_sample_project as msp
+from tests.integration_tests.conftest import tmp_project  # noqa: F401
 
 # Skip the default module-level `manage.py deploy call`, so we can call
 # `deploy` with our own set of plugin-specific CLI args.

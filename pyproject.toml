@@ -108,7 +108,8 @@ target-version = "py313"
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["A", "B", "C", "D", "E", "F", "I"]
-per-file-ignores = {}
+# Pytest fixture imports from core's conftest trigger F811 on test function params.
+per-file-ignores = { "tests/**/test_*.py" = ["F811"] }
 select = [
     # pycodestyle
     "E",
