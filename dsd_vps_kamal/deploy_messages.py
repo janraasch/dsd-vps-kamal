@@ -4,8 +4,6 @@
 
 from textwrap import dedent
 
-from django.conf import settings
-
 confirm_automate_all = """
 The --automate-all flag means django-simple-deploy will:
 - ...
@@ -68,7 +66,7 @@ def success_msg(log_output=""):
     """
 
     msg = dedent(
-        f"""
+        """
         --- Your project is now configured for deployment on VPS Kamal ---
 
         To deploy your project, you will need to:
@@ -89,7 +87,7 @@ def success_msg(log_output=""):
 
     if log_output:
         msg += dedent(
-            f"""
+            """
         - You can find a full record of this configuration in the dsd_logs directory.
         """
         )

@@ -1,14 +1,9 @@
 """Manages all Kamal-powered VPS-specific aspects of the deployment process."""
 
-import json
-import os
-import re
 import subprocess
-import sys
 import webbrowser
 from pathlib import Path
 
-import requests
 from django.core.management.utils import get_random_secret_key
 from django.utils.crypto import get_random_string
 from django.utils.safestring import mark_safe
