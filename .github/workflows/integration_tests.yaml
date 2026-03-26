@@ -7,7 +7,12 @@ on:
 
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    name: Run integration tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     steps:
       - name: Checkout dsd-vps-kamal
         uses: actions/checkout@v6
