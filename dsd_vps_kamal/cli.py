@@ -66,9 +66,9 @@ def _validate_ip_address(ip_address):
 
     try:
         ipaddress.IPv4Address(ip_address)
-    except ipaddress.AddressValueError:
+    except ipaddress.AddressValueError as e:
         msg = f"The --ip-address value '{ip_address}' is not a valid IPv4 address."
-        raise DSDCommandError(msg)
+        raise DSDCommandError(msg) from e
 
     # ip_address is valid. Set the relevant plugin_config attribute.
     plugin_config.ip_address = ip_address

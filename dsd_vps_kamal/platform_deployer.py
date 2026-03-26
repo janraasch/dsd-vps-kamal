@@ -74,8 +74,8 @@ class PlatformDeployer:
         """Check that the Docker daemon is running."""
         try:
             output_obj = plugin_utils.run_quick_command("docker info")
-        except FileNotFoundError:
-            raise DSDCommandError(platform_msgs.docker_not_running)
+        except FileNotFoundError as e:
+            raise DSDCommandError(platform_msgs.docker_not_running) from e
 
         plugin_utils.log_info(output_obj)
 
@@ -125,10 +125,10 @@ class PlatformDeployer:
         ]
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired as e:
             raise DSDCommandError(
                 f"SSH connection to {ip} timed out. Ensure the server is reachable and SSH key auth is configured."
-            )
+            ) from e
 
         if result.returncode != 0:
             msg = f"Could not connect to {ip} via SSH."
