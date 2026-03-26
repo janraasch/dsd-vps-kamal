@@ -92,7 +92,4 @@ def check_log(tmp_proj_dir):
         return False
 
     log_str = log_files[0].read_text()
-    if "DATABASE_URL" in log_str:
-        return False
-
-    return True
+    return "DATABASE_URL" not in log_str
