@@ -22,7 +22,7 @@ def test_host_written_to_deploy_yml(tmp_project):
     # Verify host is inside the proxy section.
     lines = contents.splitlines()
     proxy_index = lines.index("proxy:")
-    host_index = next(i for i, l in enumerate(lines) if "host: foo.example.com" in l)
+    host_index = next(i for i, line in enumerate(lines) if "host: foo.example.com" in line)
     assert host_index > proxy_index
     assert lines[host_index].startswith("  ")
 
