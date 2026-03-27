@@ -7,6 +7,7 @@ name = "dsd-vps-kamal"
 version = "0.1.0"
 description = "A Django Simple Deploy plugin for deploying Django projects to any VPS provider using Kamal."
 readme = "README.md"
+license = "BSD-3-Clause"
 
 authors = [
     {name = "Jan Raasch", email = "jan@janraasch.com" },
@@ -18,14 +19,16 @@ classifiers = [
     "Framework :: Django :: 5.0",
     "Framework :: Django :: 5.1",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: BSD License",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: System :: Software Distribution",
 ]
 
 keywords = ["django", "deployment", "vps", "kamal"]
@@ -58,10 +61,10 @@ dev = [
     "twine>=5.1.1",
 ]
 
-# [project.urls]
-# "Documentation" = "<documentation URL>"
-# "GitHub" = "<GH repo URL>"
-# "Changelog" = "<changelog URL"
+[project.urls]
+Homepage = "https://github.com/janraasch/dsd-vps-kamal"
+Source = "https://github.com/janraasch/dsd-vps-kamal"
+Tracker = "https://github.com/janraasch/dsd-vps-kamal/issues"
 
 [tool.pytest.ini_options]
 testpaths = ["tests/unit_tests"]
