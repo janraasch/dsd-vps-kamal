@@ -208,10 +208,7 @@ class PlatformDeployer:
     def _add_dockerfile(self):
         """Add a Dockerfile for building the deployment image."""
         template_path = self.templates_path / "dockerfile"
-        context = {
-            "django_project_name": dsd_config.local_project_name,
-        }
-        contents = plugin_utils.get_template_string(template_path, context)
+        contents = plugin_utils.get_template_string(template_path, {})
 
         path = dsd_config.project_root / "Dockerfile"
         plugin_utils.add_file(path, contents)
