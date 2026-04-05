@@ -40,6 +40,24 @@ def test_check_vps_kamal_settings_calls_check_settings(mocker):
     )
 
 
+def test_kamal_app_name_prefers_deployed_project_name(monkeypatch):
+    """_kamal_app_name uses dsd_config.deployed_project_name when set."""
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "my_blog_project")
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+
+    deployer = PlatformDeployer()
+    assert deployer._kamal_app_name() == "my_blog_project"
+
+
+def test_kamal_app_name_falls_back_to_local_project_name(monkeypatch):
+    """_kamal_app_name uses local_project_name when deployed_project_name is empty."""
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "")
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+
+    deployer = PlatformDeployer()
+    assert deployer._kamal_app_name() == "blog"
+
+
 def test_check_ssh_connection_succeeds(mocker):
     """_check_ssh_connection succeeds when SSH connection works."""
     ip = "192.168.1.100"
@@ -163,6 +181,7 @@ def test_modify_gitignore_creates_file(tmp_path, monkeypatch):
 def test_add_kamal_secrets(tmp_path, monkeypatch):
     """_add_kamal_secrets creates .kamal/secrets with correct structure."""
     monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "")
     monkeypatch.setattr(dsd_config, "local_project_name", "blog")
     monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
     monkeypatch.setattr(dsd_config, "unit_testing", True)
@@ -189,7 +208,7 @@ def test_add_kamal_secrets(tmp_path, monkeypatch):
         if line.startswith("SECRET_KEY="):
             assert len(line.split("=", 1)[1]) >= 50
 
-    # DATABASE_URL should reference app_name and postgres container
+    # DATABASE_URL should reference kamal_app_name and postgres container
     for line in contents.splitlines():
         if line.startswith("DATABASE_URL="):
             assert line.startswith("DATABASE_URL=postgres://blog:")
@@ -201,9 +220,30 @@ def test_add_kamal_secrets(tmp_path, monkeypatch):
             assert len(line.split("=", 1)[1]) >= 20
 
 
+def test_add_kamal_secrets_uses_deployed_project_name_in_database_url(tmp_path, monkeypatch):
+    """_add_kamal_secrets DATABASE_URL uses deployed_project_name when set."""
+    monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "my_blog_project")
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+    monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
+    monkeypatch.setattr(dsd_config, "unit_testing", True)
+    monkeypatch.setattr(plugin_config, "use_sqlite", False)
+
+    deployer = PlatformDeployer()
+    deployer._add_kamal_secrets()
+
+    for line in (tmp_path / ".kamal" / "secrets").read_text().splitlines():
+        if line.startswith("DATABASE_URL="):
+            assert line.startswith("DATABASE_URL=postgres://my_blog_project:")
+            assert "@my_blog_project-postgres:5432/my_blog_project" in line
+            return
+    raise AssertionError("DATABASE_URL line not found")
+
+
 def test_add_kamal_secrets_sqlite_omits_postgres(tmp_path, monkeypatch):
     """_add_kamal_secrets omits DATABASE_URL and POSTGRES_PASSWORD when use_sqlite."""
     monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "")
     monkeypatch.setattr(dsd_config, "local_project_name", "blog")
     monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
     monkeypatch.setattr(dsd_config, "unit_testing", True)
@@ -243,6 +283,7 @@ def test_add_requirements_includes_postgres_when_not_sqlite(monkeypatch, mocker)
 def test_add_deploy_yml_passes_use_sqlite_to_template(tmp_path, monkeypatch, mocker):
     """_add_deploy_yml template context includes use_sqlite."""
     monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "")
     monkeypatch.setattr(dsd_config, "local_project_name", "blog")
     monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
     monkeypatch.setattr(plugin_config, "ip_address", "10.0.0.1")
@@ -258,11 +299,34 @@ def test_add_deploy_yml_passes_use_sqlite_to_template(tmp_path, monkeypatch, moc
 
     context = mock_tpl.call_args[0][1]
     assert context["use_sqlite"] is True
+    assert context["kamal_app_name"] == "blog"
+
+
+def test_add_deploy_yml_passes_kamal_app_name_from_deployed_project(tmp_path, monkeypatch, mocker):
+    """_add_deploy_yml kamal_app_name reflects deployed_project_name when set."""
+    monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "prod_blog")
+    monkeypatch.setattr(dsd_config, "local_project_name", "blog")
+    monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
+    monkeypatch.setattr(plugin_config, "ip_address", "10.0.0.1")
+    monkeypatch.setattr(plugin_config, "host", "")
+    monkeypatch.setattr(plugin_config, "use_sqlite", False)
+    mock_tpl = mocker.patch(
+        "dsd_vps_kamal.platform_deployer.plugin_utils.get_template_string",
+        return_value="yml",
+    )
+
+    deployer = PlatformDeployer()
+    deployer._add_deploy_yml()
+
+    context = mock_tpl.call_args[0][1]
+    assert context["kamal_app_name"] == "prod_blog"
 
 
 def test_add_kamal_secrets_passes_use_sqlite_to_template(tmp_path, monkeypatch, mocker):
     """_add_kamal_secrets template context includes use_sqlite and omits DB keys."""
     monkeypatch.setattr(dsd_config, "project_root", tmp_path)
+    monkeypatch.setattr(dsd_config, "deployed_project_name", "")
     monkeypatch.setattr(dsd_config, "local_project_name", "blog")
     monkeypatch.setattr(dsd_config, "stdout", sys.stdout)
     monkeypatch.setattr(dsd_config, "unit_testing", True)

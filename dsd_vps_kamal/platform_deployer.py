@@ -146,11 +146,15 @@ class PlatformDeployer:
             platform_msgs.cant_overwrite_settings,
         )
 
+    def _kamal_app_name(self) -> str:
+        """Kamal service/image/Postgres identity (--deployed-project-name or local name)."""
+        return dsd_config.deployed_project_name or dsd_config.local_project_name
+
     def _add_deploy_yml(self):
         """Add a Kamal config/deploy.yml file."""
         template_path = self.templates_path / "deploy.yml"
         context = {
-            "app_name": dsd_config.local_project_name,
+            "kamal_app_name": self._kamal_app_name(),
             "ip_address": plugin_config.ip_address or "__SERVER_IP__",
             "host": plugin_config.host or "",
             "use_sqlite": plugin_config.use_sqlite,
@@ -195,8 +199,8 @@ class PlatformDeployer:
 
         if not plugin_config.use_sqlite:
             postgres_password = get_random_string(length=24)
-            app_name = dsd_config.local_project_name
-            database_url = f"postgres://{app_name}:{postgres_password}@{app_name}-postgres:5432/{app_name}"
+            name = self._kamal_app_name()
+            database_url = f"postgres://{name}:{postgres_password}@{name}-postgres:5432/{name}"
             context["database_url"] = mark_safe(database_url)
             context["postgres_password"] = mark_safe(postgres_password)
         contents = plugin_utils.get_template_string(template_path, context)

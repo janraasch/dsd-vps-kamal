@@ -87,7 +87,7 @@ def test_kamal_secrets(tmp_project):
     assert "DATABASE_URL=" in contents
     assert "POSTGRES_PASSWORD=" in contents
 
-    # DATABASE_URL has predictable structure (app_name is "blog" in test project)
+    # DATABASE_URL has predictable structure (kamal_app_name falls back to "blog")
     for line in contents.splitlines():
         if line.startswith("DATABASE_URL="):
             assert line.startswith("DATABASE_URL=postgres://blog:")
