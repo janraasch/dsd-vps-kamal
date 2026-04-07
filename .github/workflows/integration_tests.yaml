@@ -24,7 +24,7 @@ jobs:
           repository: django-simple-deploy/django-simple-deploy
           path: django-simple-deploy
       - name: Install just
-        uses: extractions/setup-just@v3
+        uses: extractions/setup-just@v4
       - name: Install uv and set the Python version
         uses: astral-sh/setup-uv@v7
         with:
