@@ -157,8 +157,6 @@ if os.environ.get("ON_VPS"):
 
     ALLOWED_HOSTS = ["__SERVER_IP__"]
 
-    INSTALLED_APPS = [*INSTALLED_APPS, "django_prodserver"]
-
     from pathlib import Path
 
     from dj_lite import sqlite_config
@@ -173,6 +171,8 @@ if os.environ.get("ON_VPS"):
     MIDDLEWARE.insert(i + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
     CSRF_TRUSTED_ORIGINS = ["https://__SERVER_IP__"]
+
+    INSTALLED_APPS = [*INSTALLED_APPS, "django_prodserver"]
 
     PRODUCTION_PROCESSES = {
         "web": {
