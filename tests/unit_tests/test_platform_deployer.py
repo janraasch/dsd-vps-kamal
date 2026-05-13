@@ -266,7 +266,7 @@ def test_add_requirements_sqlite_skips_postgres_packages(monkeypatch, mocker):
     deployer = PlatformDeployer()
     deployer._add_requirements()
 
-    mock_add.assert_called_once_with(["gunicorn", "whitenoise", "dj-lite"])
+    mock_add.assert_called_once_with(["gunicorn", "django-prodserver", "whitenoise", "dj-lite"])
 
 
 def test_add_requirements_includes_postgres_when_not_sqlite(monkeypatch, mocker):
@@ -277,7 +277,9 @@ def test_add_requirements_includes_postgres_when_not_sqlite(monkeypatch, mocker)
     deployer = PlatformDeployer()
     deployer._add_requirements()
 
-    mock_add.assert_called_once_with(["gunicorn", "whitenoise", "psycopg2-binary", "dj-database-url"])
+    mock_add.assert_called_once_with(
+        ["gunicorn", "django-prodserver", "whitenoise", "psycopg2-binary", "dj-database-url"]
+    )
 
 
 def test_add_deploy_yml_passes_use_sqlite_to_template(tmp_path, monkeypatch, mocker):

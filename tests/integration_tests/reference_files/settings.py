@@ -158,6 +158,8 @@ if os.environ.get("ON_VPS"):
 
     ALLOWED_HOSTS = ["__SERVER_IP__"]
 
+    INSTALLED_APPS = [*INSTALLED_APPS, "django_prodserver"]
+
     db_url = os.environ.get("DATABASE_URL")
     DATABASES["default"] = dj_database_url.parse(db_url)
 
@@ -169,3 +171,13 @@ if os.environ.get("ON_VPS"):
     MIDDLEWARE.insert(i + 1, "whitenoise.middleware.WhiteNoiseMiddleware")
 
     CSRF_TRUSTED_ORIGINS = ["https://__SERVER_IP__"]
+
+    PRODUCTION_PROCESSES = {
+        "web": {
+            "BACKEND": "django_prodserver.backends.servers.gunicorn.GunicornServer",
+            "ARGS": {
+                "bind": ":8000",
+                "workers": 2,
+            },
+        },
+    }

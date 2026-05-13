@@ -226,19 +226,16 @@ class PlatformDeployer:
         plugin_utils.add_file(path, contents)
 
     def _add_start_script(self):
-        """Add start-web.sh script that runs migrations then starts gunicorn."""
+        """Add start-web.sh script that runs migrations then starts the server."""
         template_path = self.templates_path / "start-web.sh"
-        context = {
-            "django_project_name": dsd_config.local_project_name,
-        }
-        contents = plugin_utils.get_template_string(template_path, context)
+        contents = plugin_utils.get_template_string(template_path, {})
 
         path = dsd_config.project_root / "start-web.sh"
         plugin_utils.add_file(path, contents)
 
     def _add_requirements(self):
         """Add requirements for deploying to VPS via Kamal."""
-        requirements = ["gunicorn", "whitenoise"]
+        requirements = ["gunicorn", "django-prodserver", "whitenoise"]
         if plugin_config.use_sqlite:
             requirements.append("dj-lite")
         else:
