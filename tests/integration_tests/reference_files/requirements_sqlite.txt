@@ -10,5 +10,6 @@ urllib3==2.2.3
 
 django-simple-deploy=={current-version}
 gunicorn
+django-prodserver
 whitenoise
 dj-lite

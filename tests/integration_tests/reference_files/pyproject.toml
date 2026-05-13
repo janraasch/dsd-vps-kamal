@@ -22,6 +22,7 @@ optional = true
 [tool.poetry.group.deploy.dependencies]
 django-simple-deploy = "=={current-version}"
 gunicorn = "*"
+django-prodserver = "*"
 whitenoise = "*"
 psycopg2-binary = "*"
 dj-database-url = "*"
