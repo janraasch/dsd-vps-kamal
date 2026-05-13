@@ -67,6 +67,13 @@ Plugin for [django-simple-deploy](https://github.com/ehmatthes/django-simple-dep
 - Ruff configured in `pyproject.toml` (line-length 120, target py313, rules: E, F, UP, B, SIM, I)
 - Always run `just lint` and `just format` before committing
 
+## Releasing
+
+- Version source: `pyproject.toml` (`[project] version`) — `uv.lock` mirrors it and must be refreshed via `uv lock` after a bump
+- Publish trigger: a *published* GitHub release fires `.github/workflows/publish.yml`, which builds with `uv build` and uploads to PyPI via OIDC (no manual token)
+- Bump workflow: edit version in `pyproject.toml` → `uv lock` → `just lint` + `just test` → commit `Bump version` (only `pyproject.toml` + `uv.lock` should change) → push → create the GitHub release in the UI or with `gh release create vX.Y.Z`
+- SemVer: user-visible template/runtime changes → minor bump; pure fixes → patch bump (pre-1.0, so breaking changes still allowed in a minor)
+
 ## Conventions
 
 - Always use TDD: write failing test first, watch it fail, then write minimal code to pass
