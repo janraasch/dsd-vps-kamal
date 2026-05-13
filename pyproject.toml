@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dsd-vps-kamal"
-version = "0.1.1"
+version = "0.2.0"
 description = "A Django Simple Deploy plugin for deploying Django projects to any VPS provider using Kamal."
 readme = "README.md"
 license = "BSD-3-Clause"
